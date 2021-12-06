@@ -1,9 +1,9 @@
 const path = require('path')
 const url = require('url')
 const { app, BrowserWindow } = require('electron')
+const Store = require('electron-store');
 const { ipcMain } = require('electron');
 //Electron pos printer
-
 
 let mainWindow
 let subWindow
@@ -19,8 +19,10 @@ if (
 
 function createMainWindow() {
 	mainWindow = new BrowserWindow({
-		width: 1100,
-		height: 800,
+		width: 800,
+		height: 600,
+		minWidth: 800,
+		minHeight: 600,
 		show: false,
 		icon: `${__dirname}/assets/icon.png`,
 		webPreferences: {
@@ -30,7 +32,9 @@ function createMainWindow() {
 
 	subWindow = new BrowserWindow({
 		width: 800,
-		height: 800,
+		height: 600,
+		minWidth: 800,
+		minHeight: 600,
 		show: false,
 		icon: `${__dirname}/assets/icon.png`,
 		webPreferences: {
@@ -71,6 +75,12 @@ function createMainWindow() {
 		})
 	}
 
+	Store.initRenderer();
+
+	// set windows to full screen
+	mainWindow.maximize();
+	subWindow.maximize();
+
 	mainWindow.loadURL(indexPath)
 	subWindow.loadURL(subPath)
 
@@ -79,17 +89,17 @@ function createMainWindow() {
 		mainWindow.show()
 
 		// Open devtools if dev
-		if (isDev) {
-			const {
-				default: installExtension,
-				REACT_DEVELOPER_TOOLS,
-			} = require('electron-devtools-installer')
+		// if (isDev) {
+		// 	const {
+		// 		default: installExtension,
+		// 		REACT_DEVELOPER_TOOLS,
+		// 	} = require('electron-devtools-installer')
 
-			installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-				console.log('Error loading React DevTools: ', err)
-			)
-			mainWindow.webContents.openDevTools()
-		}
+		// 	installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
+		// 		console.log('Error loading React DevTools: ', err)
+		// 	)
+		// 	mainWindow.webContents.openDevTools()
+		// }
 	})
 
 	    ipcMain.on('update-data-tampilan', (event, arg) => {
@@ -103,17 +113,17 @@ function createMainWindow() {
 		subWindow.show()
 
 		// Open devtools if dev
-		if (isDev) {
-			const {
-				default: installExtension,
-				REACT_DEVELOPER_TOOLS,
-			} = require('electron-devtools-installer')
+		// if (isDev) {
+		// 	const {
+		// 		default: installExtension,
+		// 		REACT_DEVELOPER_TOOLS,
+		// 	} = require('electron-devtools-installer')
 
-			installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-				console.log('Error loading React DevTools: ', err)
-			)
-			subWindow.webContents.openDevTools()
-		}
+		// 	installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
+		// 		console.log('Error loading React DevTools: ', err)
+		// 	)
+		// 	subWindow.webContents.openDevTools()
+		// }
 	})
 
 	subWindow.on('closed', () => (subWindow = null))
@@ -123,9 +133,42 @@ app.on('ready', createMainWindow)
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
-		app.quit()
+		const store = new Store();
+		store.delete('token');
+		store.delete('data');
+		app.quit();
 	}
 })
+
+// Set and Get Token from Local Storage
+ipcMain.on('store-token', (event, token) => {
+	const store = new Store();
+	store.set('token', token);
+	event.returnValue = 'Token stored!';
+});
+ipcMain.on('get-token', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('token');
+});
+
+// Set and Get Overall Sales Data from Local Storage
+ipcMain.on('store-data', (event, data) => {
+	const store = new Store();
+	store.set('data', data);
+	event.returnValue = 'Data stored!';
+});
+ipcMain.on('get-data', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('data');
+});
+
+// Clear local storage
+ipcMain.on('clear-storage', (event) => {
+	const store = new Store();
+	store.delete('token');
+	store.delete('data');
+	event.returnValue = 'Storage cleared!';
+});
 
 app.on('activate', () => {
 	if (mainWindow === null) {

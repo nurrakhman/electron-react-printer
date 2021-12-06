@@ -1,0 +1,30 @@
+/* Sidebar Container */
+#sidebar .MuiDrawer-paper {
+    width: 280px;
+}
+
+/* Sidebar SubHeader */
+.sidebar-header {
+    padding: 0.5rem;
+    border-bottom: 3px solid var(--main-dark-green);
+}
+
+/* Sidebar logo style */
+.sidebar-logo {
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Sidebar item & sub-item style */
+.MuiListItem-button.sidebar-item {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.sidebar-item-text .MuiTypography-root {
+    font-size: 1em;
+    font-family: 'Verdana';
+}
+.MuiListItemIcon-root.sidebar-icon {
+    margin-right: -15px;
+}

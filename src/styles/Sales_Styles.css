@@ -1,0 +1,83 @@
+/* Search Bar Style */
+#search-bar {
+    margin-bottom: 15px;
+}
+#search-bar .wrapper {
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+/* Cart Style */
+#cart-items {
+    overflow: auto;
+    max-height: 500px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.item-discount p {
+    margin-top: 0;
+}
+
+/* Quantity Cell Style */
+.qty-text {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* Discount Dropdown Style */
+.dropdown-discount .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+    transform: scale(0.9);
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+@media (min-height: 500px) and (max-height: 580px) {
+    #search-bar {
+        margin-bottom: 0;
+    }
+    #cart-items {
+        max-height: 300px;
+    }
+    #cart-items p,
+    #cart-items span {
+        font-size: 0.8em;
+    }
+    #cart-items .MuiSvgIcon-root {
+        width: 0.8em;
+        height: 0.8em;
+    }
+}
+@media (min-height: 580px) and (max-height: 620px) {
+    #search-bar {
+        margin-bottom: 10px;
+    }
+    #cart-items {
+        max-height: 350px;
+    }
+    #cart-items p,
+    #cart-items span {
+        font-size: 0.85em;
+    }
+    #cart-items .MuiSvgIcon-root {
+        width: 0.85em;
+        height: 0.85em;
+    }
+}
+@media (min-height: 620px) and (max-height: 700px) {
+    #cart-items {
+        max-height: 380px;
+    }
+    #cart-items p,
+    #cart-items span {
+        font-size: 0.9em;
+    }
+    #cart-items .MuiSvgIcon-root {
+        width: 0.9em;
+        height: 0.9em;
+    }
+}
+@media (min-height: 700px) and (max-height: 768px) {
+    #cart-items {
+        max-height: 450px;
+    }
+}

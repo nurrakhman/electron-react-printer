@@ -1,0 +1,54 @@
+:root {
+    --main-dark-green: #005c43;
+    --sub-dark-green: #007f60;
+    --main-green: #57ab4e;
+    --main-light-green: #bfd730;
+    --main-orange: #ea8c3a;
+    --main-yellow: #ffe73f;
+}
+
+#header-container,
+.login-container,
+.sidebar,
+.sidebar .MuiList-subheader .MuiListSubheader-root {
+    background-color: var(--main-dark-green);
+}
+
+.primary-btn.MuiButton-root,
+#sidebar .active-link .MuiListItem-button.sidebar-item,
+#sidebar .active-link .MuiListItemIcon-root {
+    color: white;
+    background-color: var(--main-dark-green);
+}
+#header-container .header-refresh {
+    color: var(--main-dark-green);
+    background-color: white;
+}
+
+.primary-btn.MuiButton-root:hover {
+    background-color: var(--sub-dark-green);
+}
+
+.settings-container {
+    background-color: lightgray;
+}
+
+#login-form,
+.settings-content {
+    background-color: white;
+}
+
+#sidebar .MuiListItem-button.sidebar-item,
+#sidebar .MuiListItemIcon-root,
+.pointable:hover {
+    color: var(--main-dark-green);
+}
+
+.secondary-btn.MuiButton-root {
+    border-color: var(--main-dark-green);
+}
+
+.item-discount p,
+.item-discount span {
+    color: var(--main-orange);
+}

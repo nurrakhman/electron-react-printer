@@ -1,0 +1,20 @@
+.settings-container {
+    height: 100vh;
+}
+
+.settings-content.MuiGrid-item {
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 5px;
+}
+
+.settings-content .right-section {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+}
+
+.settings-content .right-section span,
+.settings-content .right-section .MuiButton-root {
+    margin-left: auto;
+}

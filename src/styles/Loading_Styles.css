@@ -1,0 +1,19 @@
+#bg-spinner {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1310; /* ahead of modal / popup */
+    position: fixed;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#load-spinner {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+}
+
+#load-spinner svg {
+    color: white;
+}
