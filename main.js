@@ -184,6 +184,14 @@ ipcMain.on('get-address', (event) => {
 	event.returnValue = store.get('address');
 });
 
+// Get image logo path
+ipcMain.on('get-logo', (event) => {
+	let res = {
+		path: path.join(__dirname, 'assets/logo.png'),
+	}
+	event.returnValue = res;
+});
+
 // Clear local storage
 ipcMain.on('clear-storage', (event) => {
 	const store = new Store();

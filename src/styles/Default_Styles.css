@@ -57,6 +57,11 @@ body {
     margin-bottom: 15px !important;
 }
 
+/* Padding Styles */
+.no-padding {
+    padding: 0 !important;
+}
+
 /* Middle Aligned Item */
 .middle-align {
     display: flex;

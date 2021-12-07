@@ -7,7 +7,7 @@ import { Button, Grid, TextField, Snackbar, CircularProgress } from "@material-u
 import HeaderCom from "../components/Header_Com";
 import CustomModal from "../components/Modal_Com";
 import { postTransaction } from "../logic/APIHandler";
-import { formatPriceWithoutCurrency, formatToPrice, unformatPrice } from "../logic/Handler";
+import { formatPriceWithoutCurrency, formatToPrice, getDefaultAddress, unformatPrice } from "../logic/Handler";
 import "../styles/TransactionDetail_Styles.css";
 import logo from '../../assets/logo.png';
 
@@ -61,7 +61,6 @@ export default function TransactionDetail(props) {
     const [connectedDevice, setConnectedDevice] = useState('');
     const [manualInput, setManualInput] = useState(false);
     const [finishText, setFinishText] = useState('KEMBALI');
-    const [receiptName, setReceiptName] = useState('');
     const [printData, setPrintData] = useState('');
     const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
@@ -88,6 +87,7 @@ export default function TransactionDetail(props) {
             else {
                 setCalculatedValue('Rp 0');
             }
+            setConnectedDevice(ipcRenderer.sendSync('get-printer'));
         }
     }, []);
 
@@ -326,7 +326,7 @@ export default function TransactionDetail(props) {
 
     const handlePrintReceipt = (receipt) => {
         const data = createDataForm('print');
-        console.log(path.join(__dirname, 'assets/logo.png'))
+        const mainLogo = ipcRenderer.sendSync('get-logo');
 
         // Create table body value
         let tableData = [];
@@ -368,7 +368,7 @@ export default function TransactionDetail(props) {
             if ( res.discount && res.discount !== 'Rp 0' ) {
                 tableData.push({
                     type: 'table',
-                    style: 'border-style: none; margin-left: -7px',
+                    style: 'border-style: none; margin-top: -3px; margin-left: -7px',
                     tableBody: [[
                         {
                             type: 'text',
@@ -440,7 +440,7 @@ export default function TransactionDetail(props) {
                 tableData.push({
                     type: "text",
                     value: "_____________________________________",
-                    style: `text-align: center; margin-left: -5px;`,
+                    style: `text-align: center; margin-top: -10px; margin-left: -5px;`,
                     css: { "font-size": "12px" }
                 });
 
@@ -502,13 +502,19 @@ export default function TransactionDetail(props) {
         }
 
         // Create printing data
-        const address = ipcRenderer.sendSync('get-address');
+        let address = ipcRenderer.sendSync('get-address');
+        if ( address ) {
+            address = JSON.parse(address);
+        }
+        else {
+            address = getDefaultAddress();
+        }
         let printData = [
             {
                 type: 'image',
-                path: path.join(__dirname, 'assets/logo.png'),
+                path: mainLogo.path,
                 position: 'center',
-                width: '80px',
+                width: '150px',
                 height: '50px',
             },
             {
@@ -560,8 +566,7 @@ export default function TransactionDetail(props) {
             margin: "0 0 0 0", // margin of content body
             copies: 1, // Number of copies to print
             printerName: activePrinter, // printerName: string, check it at webContent.getPrinters()
-            timeOutPerLine: 10000,
-            // timeOutPerLine: 5000,
+            timeOutPerLine: 5000,
             silent: true
         };
 
@@ -570,7 +575,7 @@ export default function TransactionDetail(props) {
             PosPrinter.print(dataToPrint, options)
               .then(() => {})
               .catch(error => {
-                console.error(error);
+                console.log(error);
             });
         }
     }
@@ -590,7 +595,6 @@ export default function TransactionDetail(props) {
                     setFinishText('SELESAI');
                     setAlertText('Berhasil membuat transaksi!');
                     setOpenSuccessAlert(true);
-                    setReceiptName(resp[0].data.no_invoice);
                     handlePrintReceipt(resp[0].data.no_invoice);
                 }
                 else if ( resp[1] && resp[1].status === 401 ) {

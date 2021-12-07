@@ -4,7 +4,7 @@ import "../styles/Color_Styles.css";
 import "../styles/Default_Styles.css";
 
 // Pages
-import WinA from "./WinA";
+// import WinA from "./WinA";
 import WinB from "./WinB";
 import LoginPage from "../pages/Login_Page";
 import SalesPage from "../pages/Sales_Page";

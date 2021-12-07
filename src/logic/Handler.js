@@ -108,3 +108,15 @@
   }
   else return [];
 }
+
+/**
+ * Return default store/branch address (Pangkalan Bun)
+ */
+ export const getDefaultAddress = () => {
+  const result = [
+    "Jl. Pakunegara No. 13 RT. 17, Kel. Raja,",
+    "Kec. Arut Selatan, Kab. Kotawaringin Barat,",
+    "Kalimantan Tengah",
+  ];
+  return result;
+ }
