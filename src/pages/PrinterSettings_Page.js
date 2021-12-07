@@ -1,18 +1,33 @@
-import React from "react";
-import { Grid, Button } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Grid, Radio, RadioGroup, FormControl, FormControlLabel } from "@material-ui/core";
 import HeaderCom from "../components/Header_Com";
 import "../styles/Settings_Styles.css";
 
 const { remote } = require("electron");
-const { PosPrinter } = require("electron").remote.require(
-    "electron-pos-printer"
-);
+const { ipcRenderer } = require("electron");
 
 export default function PrinterSettings() {
 
-    const getPrinters = () => {
+    const [activePrinter, setActivePrinter] = useState(null);
+    const [printerList, setPrinterList] = useState([]);
+
+    useEffect(() => {
+        // Get list of paired printers
         let webContents = remote.getCurrentWebContents();
-        let printers = webContents.getPrinters(); //list the printers
+        let printers = webContents.getPrinters();
+        let result = [];
+        printers.forEach(res => {
+            result.push(res.name);
+        })
+        setPrinterList(result);
+        // Set current active printer
+        const currPrinter = ipcRenderer.sendSync('get-printer');
+        if ( currPrinter ) setActivePrinter(currPrinter);
+    }, []);
+
+    const changePrinter = (e) => {
+        setActivePrinter(e.target.value);
+        ipcRenderer.sendSync('set-printer', e.target.value);
     }
 
     return (
@@ -22,25 +37,26 @@ export default function PrinterSettings() {
                 <Grid container>
                     <Grid item xs={3}></Grid>
                     <Grid item xs={6} className="settings-content">
-                        <Grid container>
-                            <Grid item xs={6} className="left-section">
-                                <h4>Koneksi Printer</h4>
-                            </Grid>
-                            <Grid item xs={6} className="right-section">
-                                <span>-</span>
-                            </Grid>
-                            <Grid item xs={6} className="left-section">
-                                <h4>Sambungkan Printer?</h4>
-                            </Grid>
-                            <Grid item xs={6} className="right-section">
-                                <Button
-                                    variant="contained"
-                                    className="primary-btn"
-                                >
-                                    SAMBUNGKAN
-                                </Button>
-                            </Grid>
-                        </Grid>
+                        <h4>Daftar printer yang terhubung :</h4>
+                        <FormControl component="fieldset">
+                            <RadioGroup
+                                aria-label="printers"
+                                name="list-of-printer"
+                                value={activePrinter}
+                                onChange={changePrinter}
+                            >
+                                {printerList.length > 0 && printerList.map((res, idx) => {
+                                    return (
+                                        <FormControlLabel
+                                            key={`res_${idx}`}
+                                            value={res}
+                                            control={<Radio />}
+                                            label={res}
+                                        />
+                                    )
+                                })}
+                            </RadioGroup>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={3}></Grid>
                 </Grid>

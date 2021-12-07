@@ -40,6 +40,7 @@
 
 #sidebar .MuiListItem-button.sidebar-item,
 #sidebar .MuiListItemIcon-root,
+.MuiFormGroup-root .MuiRadio-colorSecondary.Mui-checked,
 .pointable:hover {
     color: var(--main-dark-green);
 }

@@ -162,6 +162,17 @@ ipcMain.on('get-data', (event) => {
 	event.returnValue = store.get('data');
 });
 
+// Set current active printer
+ipcMain.on('set-printer', (event, data) => {
+	const store = new Store();
+	store.set('printer', data);
+	event.returnValue = 'Current active printer stored!';
+});
+ipcMain.on('get-printer', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('printer');
+});
+
 // Clear local storage
 ipcMain.on('clear-storage', (event) => {
 	const store = new Store();
