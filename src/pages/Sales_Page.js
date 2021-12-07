@@ -31,6 +31,8 @@ export default function SalesPage() {
     const [subtotal, setSubtotal] = useState('Rp 0');
     const [itemList, setItemList] = useState([]);
     const [products, setProducts] = useState([]);
+    const [totalDiscount, setTotalDiscount] = useState(0);
+    const [applyToAllDisc, setApplyToAllDisc] = useState(0);
     const [autocompleteKey, setAutocompleteKey] = useState('');
 
     // Picker State
@@ -40,9 +42,6 @@ export default function SalesPage() {
     const [selectedMethod, setSelectedMethod] = useState();
     const [discountOptions, setDiscountOptions] = useState('');
     const [currDiscount, setCurrDiscount] = useState(
-        { id: 'no-discount', label: 'Tidak pakai', value: false, discount: '0%', type: 'null' }
-    );
-    const [selectedDiscount, setSelectedDiscount] = useState(
         { id: 'no-discount', label: 'Tidak pakai', value: false, discount: '0%', type: 'null' }
     );
 
@@ -204,6 +203,8 @@ export default function SalesPage() {
             );
             // Jika produk sudah ada di cart
             if ( isDuplicate.length > 0 ) {
+                let tax = 0, onlyTax = 0;
+                let localDisc = 0, lastDisc = 0, currDisc = 0;
                 result.forEach(res => {
                     // Update hanya atribut produk yang dipilih
                     if ( res.product_code === isDuplicate[0].product_code ) {
@@ -215,7 +216,6 @@ export default function SalesPage() {
                         res.total_price = formatToPrice(res.total_price);
 
                         // Cek diskon per produk
-                        let localDisc = 0, lastDisc = 0;
                         if ( res.promo_id && res.promo_id.type_promo === 'buyxgety' ) {
                             if ( res.promo_id.x.value === res.quantity ) {
                                 let isInCart = false;
@@ -254,23 +254,36 @@ export default function SalesPage() {
                         let total = subtotalPure + lastDisc - localDisc + unformatPrice(res.selling_price);
                         setSubtotalPure(total);
                         if ( currDiscount.type === 'persen' ) {
-                            const currDisc = Math.ceil(total
+                            currDisc = Math.ceil(total
                                 * unformatPrice(currDiscount.discount) / 100);
-                            let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                            tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                            onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                         else if ( currDiscount.type === 'rupiah' ) {
-                            const currDisc = unformatPrice(currDiscount.discount);
-                            let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                            currDisc = unformatPrice(currDiscount.discount);
+                            tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                            onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                         else {
-                            let tax = Math.ceil(total * (100 + taxValue) / 100);
+                            tax = Math.ceil(total * (100 + taxValue) / 100);
+                            onlyTax = Math.ceil(total * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                     }
                 });
                 setItemList(result);
+                let subtotalData = [
+                    {
+                        discount: formatToPrice(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc),
+                        tax: formatToPrice(onlyTax),
+                        total: formatToPrice(tax),
+                    },
+                    result,
+                ];
+                ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+                setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
             }
             // Jika produk belum ada di cart
             else {
@@ -337,27 +350,43 @@ export default function SalesPage() {
                     }
 
                     // Cek jika sedang memakai diskon persenan
+                    let tax = 0, onlyTax = 0;
+                    let currDisc = 0;
                     let total = subtotalPure - localDisc + unformatPrice(product.selling_price);
                     setSubtotalPure(total);
                     if ( currDiscount.type === 'persen' ) {
-                        const currDisc = Math.ceil(total
+                        currDisc = Math.ceil(total
                             * unformatPrice(currDiscount.discount) / 100);
-                        let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
                     else if ( currDiscount.type === 'rupiah' ) {
-                        const currDisc = unformatPrice(currDiscount.discount);
-                        let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        currDisc = unformatPrice(currDiscount.discount);
+                        tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
                     else {
-                        let tax = Math.ceil(total * (100 + taxValue) / 100);
+                        tax = Math.ceil(total * (100 + taxValue) / 100);
+                        onlyTax = Math.ceil(total * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
 
                     // Tambahkan produk ke cart
                     result.push(product);
                     setItemList(result);
+                    let subtotalData = [
+                        {
+                            discount: formatToPrice(totalDiscount + localDisc + currDisc - applyToAllDisc),
+                            tax: formatToPrice(onlyTax),
+                            total: formatToPrice(tax),
+                        },
+                        result,
+                    ];
+                    ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+                    setApplyToAllDisc(totalDiscount + localDisc + currDisc - applyToAllDisc);
+                    setTotalDiscount(totalDiscount + localDisc + currDisc - applyToAllDisc);
                 }
                 else if ( isInCart ) {
                     setAutocompleteKey(Math.random() * 100);
@@ -375,6 +404,9 @@ export default function SalesPage() {
     const handleQuantity = async (type, code) => {
         let result = itemList;
         let isRemove = false;
+        let localDisc = 0, lastDisc = 0;
+        let tax = 0, onlyTax = 0;
+        let currDisc = 0;
         result.forEach(res => {
             if ( res.product_code === code ) {
                 // Menambah kuantitas & harga produk di cart, dan harga akhir
@@ -400,7 +432,6 @@ export default function SalesPage() {
                 }
 
                 // Cek jika ada diskon per produk
-                let localDisc = 0, lastDisc = 0;
                 if ( res.promo_id ) {
                     if ( res.promo_id.type_promo === 'buyxgety' ) {
                         if ( type === 'plus' && res.promo_id.x.value === res.quantity ) {
@@ -461,18 +492,23 @@ export default function SalesPage() {
                     total -= unformatPrice(res.selling_price);
                 }
                 setSubtotalPure(total);
+
                 if ( currDiscount.type === 'persen' ) {
-                    const currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
-                    let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                    currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
+                    setApplyToAllDisc(currDisc);
+                    tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                    onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
                 }
                 else if ( currDiscount.type === 'rupiah' ) {
-                    const currDisc = unformatPrice(currDiscount.discount);
-                    let tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                    currDisc = unformatPrice(currDiscount.discount);
+                    tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                    onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
                 }
                 else {
-                    let tax = Math.ceil(total * (100 + taxValue) / 100);
+                    tax = Math.ceil(total * (100 + taxValue) / 100);
+                    onlyTax = Math.ceil(total * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
                 }
             }
@@ -482,6 +518,18 @@ export default function SalesPage() {
             result = result.filter(res => res.product_code !== code);
         }
         setItemList(result);
+
+        // Send data to customer layer
+        let subtotalData = [
+            {
+                discount: formatToPrice(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc),
+                tax: formatToPrice(onlyTax),
+                total: formatToPrice(tax),
+            },
+            result,
+        ];
+        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+        setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
     };
 
     // Remove product from list of item by clicking x button
@@ -510,50 +558,84 @@ export default function SalesPage() {
         }
 
         // Cek jika sedang memakai diskon persenan
-        let total = 0;
+        let total = 0, currTotal = 0, onlyTax = 0, currDisc = 0;
         if ( currDiscount.type === 'persen' ) {
             // Membalikkan harga ke sebelum diskon lalu hitung persenannya lagi
             total = subtotalPure + lastDisc
                 - (removedProduct.quantity * unformatPrice(removedProduct.selling_price));
+            currTotal = total;
             setSubtotalPure(total);
-            const currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
+            currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
+            onlyTax = Math.ceil((total - currDisc - applyToAllDisc) * taxValue / 100);
             total = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
         }
         else {
             // Mengurangi total harga akhir saja
             total = subtotalPure + lastDisc
                 - (removedProduct.quantity * unformatPrice(removedProduct.selling_price));
+            currTotal = total;
             setSubtotalPure(total);
+            onlyTax = Math.ceil((total - applyToAllDisc)  * taxValue / 100);
             total = Math.ceil(total  * (100 + taxValue) / 100);
         }
         setSubtotal(formatToPrice(total));
+
+        // Send data to customer layer
+        let subtotalData = [
+            {
+                discount: formatToPrice(totalDiscount + currDisc - lastDisc),
+                tax: onlyTax < 0? "Rp 0" : formatToPrice(onlyTax),
+                total: formatToPrice(currTotal),
+            },
+            result,
+        ];
+        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+        setTotalDiscount(totalDiscount + currDisc - lastDisc);
     };
 
     const handleOnChangeDiscount = (discount) => {
+        let tax = 0, onlyTax = 0, totalDisc = 0;
         const temp = discountOptions.filter(res => res.value === discount.value)[0];
         if ( temp.type === 'persen' ) {
             // Total harga kurangi persentase diskon
-            let currPrice = subtotalPure - Math.ceil(subtotalPure
+            tax = subtotalPure - Math.ceil(subtotalPure
                 * unformatPrice(temp.discount) / 100);
-            currPrice = Math.ceil(currPrice * (100 + taxValue) / 100);
-            setSubtotal(formatToPrice(currPrice));
+            totalDisc = Math.ceil(subtotalPure * unformatPrice(temp.discount) / 100);
+            onlyTax = Math.ceil(tax * taxValue / 100);
+            tax = Math.ceil(tax * (100 + taxValue) / 100);
+            setSubtotal(formatToPrice(tax));
         }
         else if ( temp.type === 'rupiah' ) {
             // Total harga kurangi harga flat diskon
             const result = unformatPrice(temp.discount);
-            let tax = Math.ceil((subtotalPure - result) * (100 + taxValue) / 100);
+            totalDisc = result;
+            tax = Math.ceil((subtotalPure - result) * (100 + taxValue) / 100);
+            onlyTax = Math.ceil((subtotalPure - result) * taxValue / 100);
             setSubtotal(formatToPrice(tax));
         }
         // User tidak memakai diskon
         else {
             // Tambah subtotal dengan harga diskon sebelumnya
             if ( currDiscount.type !== 'null' ) {
-                let tax = Math.ceil(subtotalPure * (100 + taxValue) / 100);
+                tax = Math.ceil(subtotalPure * (100 + taxValue) / 100);
+                onlyTax = Math.ceil(subtotalPure * taxValue / 100);
                 setSubtotal(formatToPrice(tax));
             }
         }
         setCurrDiscount(temp);
-        setSelectedDiscount(discount.value);
+        setApplyToAllDisc(totalDisc);
+
+        // Send data to customer layer
+        let subtotalData = [
+            {
+                discount: formatToPrice(totalDiscount + totalDisc - applyToAllDisc),
+                tax: formatToPrice(onlyTax),
+                total: formatToPrice(tax),
+            },
+            itemList,
+        ];
+        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+        setTotalDiscount(totalDiscount + totalDisc - applyToAllDisc);
     }
 
     const goToTransasctionDetail = () => {
@@ -711,7 +793,7 @@ export default function SalesPage() {
                                     // size="small"
                                     disableClearable
                                     className="dropdown-discount"
-                                    defaultValue={selectedDiscount}
+                                    value={currDiscount}
                                     options={discountOptions}
                                     getOptionLabel={(option) => option.label}
                                     onChange={(_, value) => {
