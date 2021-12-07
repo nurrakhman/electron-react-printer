@@ -7,7 +7,7 @@ import { Button, Grid, TextField, Snackbar, CircularProgress } from "@material-u
 import HeaderCom from "../components/Header_Com";
 import CustomModal from "../components/Modal_Com";
 import { postTransaction } from "../logic/APIHandler";
-import { formatToPrice, unformatPrice } from "../logic/Handler";
+import { formatPriceWithoutCurrency, formatToPrice, unformatPrice } from "../logic/Handler";
 import "../styles/TransactionDetail_Styles.css";
 import logo from '../../assets/logo.png';
 
@@ -66,16 +66,6 @@ export default function TransactionDetail(props) {
     const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [alertText, setAlertText] = useState('');
-
-    const options = {
-        preview: false, // Preview in window or print
-        width: "200px", //  width of content body
-        margin: "0 0 0 0", // margin of content body
-        copies: 1, // Number of copies to print
-        printerName: "RP58 Printer", // printerName: string, check it at webContent.getPrinters()
-        timeOutPerLine: 5000,
-        silent: true
-    };
 
     useEffect(() => {
         const params = props.location.state;
@@ -335,8 +325,185 @@ export default function TransactionDetail(props) {
     };
 
     const handlePrintReceipt = (receipt) => {
+        const data = createDataForm('print');
         console.log(path.join(__dirname, 'assets/logo.png'))
-        const data = [
+
+        // Create table body value
+        let tableData = [];
+        for ( let i = 0; i < data.items.length; i++) {
+            const res = data.items[i];
+            tableData.push({
+                type: "text",
+                value: res.name,
+                style: `text-align: left; width: 210px; margin-left: -5px`,
+                css: { "font-size": "11px" }
+            });
+            tableData.push({
+                type: 'table',
+                style: 'border-style: none; margin-left: -7px',
+                tableBody: [[
+                    {
+                        type: 'text',
+                        value: res.quantity.toString(),
+                        style: `text-align: left; width: 25px;`,
+                    },
+                    {
+                        type: 'text',
+                        value: 'X',
+                        style: `text-align: left; width: 5px;`,
+                    },
+                    {
+                        type: 'text',
+                        value: formatPriceWithoutCurrency(res.selling_price),
+                        style: `text-align: right; width: 90px;`,
+                    },
+                    {
+                        type: 'text',
+                        value: formatPriceWithoutCurrency(res.total_price),
+                        style: `text-align: right; width: 90px;`,
+                    },
+                ]],
+                tableBodyStyle: 'border-style: none',
+            });
+            if ( res.discount && res.discount !== 'Rp 0' ) {
+                tableData.push({
+                    type: 'table',
+                    style: 'border-style: none; margin-left: -7px',
+                    tableBody: [[
+                        {
+                            type: 'text',
+                            value: 'Diskon',
+                            style: `text-align: left; width: 105px;`,
+                        },
+                        {
+                            type: 'text',
+                            value: ('-' + res.discount.replace('Rp ', '')),
+                            style: `text-align: right; width: 105px;`,
+                        },
+                    ]],
+                    tableBodyStyle: 'border-style: none',
+                });
+            }
+            if ( i === (data.items.length - 1) ) {
+                // PRINT DISKON APPLY TO ALL
+                if ( currDiscount.type !== 'null' ) {
+                    let labelDiscount = '';
+                    let printDiscount = '0';
+                    if ( currDiscount.type === 'rupiah' ) {
+                        labelDiscount = currDiscount.label;
+                        printDiscount = currDiscount.discount.replace('Rp ', '');
+                    }
+                    else if ( currDiscount.type === 'persen' ) {
+                        labelDiscount = currDiscount.label + ' (' + currDiscount.discount + ')';
+                        printDiscount = formatPriceWithoutCurrency(Math.ceil(
+                            unformatPrice(currDiscount.discount) * unformatPrice(subtotalPure) / 100
+                        ));
+                    }
+                    tableData.push({
+                        type: 'table',
+                        style: 'border-style: none; margin-left: -7px',
+                        tableBody: [[
+                            {
+                                type: 'text',
+                                value: labelDiscount,
+                                style: `text-align: left; width: 120px;`,
+                            },
+                            {
+                                type: 'text',
+                                value: ('-' + printDiscount),
+                                style: `text-align: right; width: 90px;`,
+                            },
+                        ]],
+                        tableBodyStyle: 'border-style: none',
+                    });
+                }
+                if ( data.taxes[0].value > 0 ) {
+                    tableData.push({
+                        type: 'table',
+                        style: 'border-style: none; margin-left: -7px',
+                        tableBody: [[
+                            {
+                                type: 'text',
+                                value: (data.taxes[0].name + ' (' + data.taxes[0].value + '%)'),
+                                style: `text-align: left; width: 105px;`,
+                            },
+                            {
+                                type: 'text',
+                                value: formatPriceWithoutCurrency(data.taxes[0].total),
+                                style: `text-align: right; width: 105px;`,
+                            },
+                        ]],
+                        tableBodyStyle: 'border-style: none',
+                    });
+                }
+
+                tableData.push({
+                    type: "text",
+                    value: "_____________________________________",
+                    style: `text-align: center; margin-left: -5px;`,
+                    css: { "font-size": "12px" }
+                });
+
+                tableData.push({
+                    type: 'table',
+                    style: `border-style: none; margin-left: -7px;`,
+                    tableBody: [[
+                        {
+                            type: 'text',
+                            value: 'Total',
+                            style: `text-align: left; width: 105px;`,
+                        },
+                        {
+                            type: 'text',
+                            value: formatPriceWithoutCurrency(data.total_price),
+                            style: `text-align: right; width: 105px;`,
+                        },
+                    ]],
+                    tableBodyStyle: 'border-style: none',
+                });
+
+                if ( currMethod.category === 'cash' ) {
+                    tableData.push({
+                        type: 'table',
+                        style: `border-style: none; margin-left: -7px;`,
+                        tableBody: [[
+                            {
+                                type: 'text',
+                                value: 'Charges (Cash)',
+                                style: `text-align: left; width: 105px;`,
+                            },
+                            {
+                                type: 'text',
+                                value: currCash.replace('Rp ', ''),
+                                style: `text-align: right; width: 105px;`,
+                            },
+                        ]],
+                        tableBodyStyle: 'border-style: none',
+                    });
+                    tableData.push({
+                        type: 'table',
+                        style: 'border-style: none; margin-left: -7px; margin-bottom: 30px',
+                        tableBody: [[
+                            {
+                                type: 'text',
+                                value: 'Changes',
+                                style: `text-align: left; width: 105px;`,
+                            },
+                            {
+                                type: 'text',
+                                value: currChange.replace('Rp ', ''),
+                                style: `text-align: right; width: 105px;`,
+                            },
+                        ]],
+                        tableBodyStyle: 'border-style: none',
+                    });
+                }
+            }
+        }
+
+        // Create printing data
+        const address = ipcRenderer.sendSync('get-address');
+        let printData = [
             {
                 type: 'image',
                 path: path.join(__dirname, 'assets/logo.png'),
@@ -346,19 +513,19 @@ export default function TransactionDetail(props) {
             },
             {
                 type: "text",
-                value: "Jl. Pakunegara No. 13 RT. 17, Kel. Raja,",
+                value: address[0],
                 style: `text-align: center;`,
                 css: { "font-size": "10px" }
             },
             {
                 type: "text",
-                value: "Kec. Arut Selatan, Kab. Kotawaringin Barat,",
+                value: address[1],
                 style: `text-align: center;`,
                 css: { "font-size": "10px" }
             },
             {
                 type: "text",
-                value: "Kalimantan Tengah",
+                value: address[2],
                 style: `text-align: center;`,
                 css: { "font-size": "10px" }
             },
@@ -370,23 +537,42 @@ export default function TransactionDetail(props) {
             },
             {
                 type: "text",
-                value: "___________________________________",
-                style: `text-align: center;`,
+                value: "_____________________________________",
+                style: `text-align: center; margin-bottom: 10px; margin-left: -5px`,
                 css: { "font-size": "12px" }
             },
         ];
 
-        setPrintData(data);
-        printReceipt(data);
+        tableData.forEach(res => {
+            printData.push(res);
+        })
+
+        setPrintData(printData);
+        printReceipt(printData);
     };
 
     const printReceipt = (data) => {
-        const dataToPrint = data? data : printData;
-        PosPrinter.print(dataToPrint, options)
-          .then(() => {})
-          .catch(error => {
-            console.error(error);
-        });
+        let options = [];
+        const activePrinter = ipcRenderer.sendSync('get-printer');
+        options = {
+            preview: false, // Preview in window or print
+            width: "210px", //  width of content body
+            margin: "0 0 0 0", // margin of content body
+            copies: 1, // Number of copies to print
+            printerName: activePrinter, // printerName: string, check it at webContent.getPrinters()
+            timeOutPerLine: 10000,
+            // timeOutPerLine: 5000,
+            silent: true
+        };
+
+        if ( activePrinter ) {
+            const dataToPrint = data? data : printData;
+            PosPrinter.print(dataToPrint, options)
+              .then(() => {})
+              .catch(error => {
+                console.error(error);
+            });
+        }
     }
 
     // Submit and create new transaction

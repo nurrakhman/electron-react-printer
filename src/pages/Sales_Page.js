@@ -52,7 +52,6 @@ export default function SalesPage() {
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [alertText, setAlertText] = useState('');
     const [token, setToken] = useState('');
-    // const [connectedDevice, setConnectedDevice] = useState('');
 
     useEffect(() => {
         // Come from Detail Transaction page
@@ -571,8 +570,6 @@ export default function SalesPage() {
                 paymentOptions: paymentOptions,
                 paymentCategories: paymentCategs,
                 selectedMethod: selectedMethod,
-                // connectedDevice: typeof printer === 'string' ?
-                //     printer : false,
             }
         });
     }
