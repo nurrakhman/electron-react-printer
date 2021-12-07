@@ -59,3 +59,52 @@
     return '';
   }
 };
+
+/**
+ * Format branch address into 1-3 lines
+ * @param branch: branch's detail address
+ */
+ export const formatBranchAddress = (branch) => {
+  if ( branch ) {
+    let result = [];
+    // Check top address
+    let topAddress = branch.address;
+    if ( branch.kelurahan ) {
+      topAddress += (", " + branch.kelurahan);
+    }
+    if ( branch.kecamatan || branch.kabupaten || branch.provinsi || branch.kodepos ) {
+      topAddress += ",";
+    }
+    result.push(topAddress);
+    //Check middle address
+    let middleAddress = "";
+    if ( branch.kecamatan && branch.kabupaten ) {
+      middleAddress = branch.kecamatan + ", " + branch.kabupaten;
+    }
+    else if ( branch.kecamatan && !branch.kabupaten ) {
+      middleAddress = branch.kecamatan;
+    }
+    else if ( !branch.kecamatan && branch.kabupaten ) {
+      middleAddress = branch.kabupaten;
+    }
+    if ( middleAddress && (branch.provinsi || branch.kodepos) ) {
+      middleAddress += ",";
+      result.push(middleAddress);
+    }
+    else if ( middleAddress ) {
+      result.push(middleAddress);
+    }
+    //Check bottom address
+    if ( branch.provinsi && branch.kodepos ) {
+      result.push(branch.provinsi + ", " + branch.kodepos);
+    }
+    else if ( branch.provinsi && !branch.kodepos ) {
+      result.push(branch.provinsi);
+    }
+    else if ( !branch.provinsi && branch.kodepos ) {
+      result.push(branch.kodepos);
+    }
+    return result;
+  }
+  else return [];
+}

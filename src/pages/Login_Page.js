@@ -8,9 +8,10 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Spinner from '../components/Loading_Com';
-import { hitLogin } from '../logic/APIHandler';
+import { getBranch, hitLogin } from '../logic/APIHandler';
 import logo from '../../assets/logo.png';
 import '../styles/Login_Styles.css';
+import { formatBranchAddress } from "../logic/Handler";
 
 const { ipcRenderer } = require('electron')
 
@@ -33,6 +34,22 @@ export default function LoginPage() {
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [alertText, setAlertText] = useState('');
 
+    const getBranchData = async (id, token) => {
+        let resp = await getBranch(id, token);
+        if ( resp[0] && resp[0].status === 200 ) {
+            let branch = resp[0].data;
+            branch = formatBranchAddress(branch);
+            ipcRenderer.sendSync('store-address', JSON.stringify(branch));
+            return true;
+        }
+        else {
+            setAlertText("Gagal mendapatkan alamat toko!");
+            setOpenErrorAlert(true);
+            setIsLoading(false);
+            return false;
+        }
+    };
+
     const handleLogin = async () => {
         setIsLoading(true);
         let message = "";
@@ -45,6 +62,11 @@ export default function LoginPage() {
                     if ( user.jobdesk === "kasir" ) {
                         canLogin = true;
                         ipcRenderer.sendSync('store-token', user.token);
+                        const hasAddress = await getBranchData(user.branch_store._id, user.token);
+                        if ( !hasAddress ) {
+                            canLogin = false;
+                            message = "Gagal mendapatkan alamat toko.";
+                        }
                     }
                     else {
                         message = "User selain kasir tidak dapat login di aplikasi ini.";

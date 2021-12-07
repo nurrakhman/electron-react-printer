@@ -162,7 +162,7 @@ ipcMain.on('get-data', (event) => {
 	event.returnValue = store.get('data');
 });
 
-// Set current active printer
+// Set & Get current active printer
 ipcMain.on('set-printer', (event, data) => {
 	const store = new Store();
 	store.set('printer', data);
@@ -173,11 +173,23 @@ ipcMain.on('get-printer', (event) => {
 	event.returnValue = store.get('printer');
 });
 
+// Set & Get branch store's address
+ipcMain.on('store-address', (event, data) => {
+	const store = new Store();
+	store.set('address', data);
+	event.returnValue = 'Branch address stored!';
+});
+ipcMain.on('get-address', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('address');
+});
+
 // Clear local storage
 ipcMain.on('clear-storage', (event) => {
 	const store = new Store();
 	store.delete('token');
 	store.delete('data');
+	store.delete('address');
 	event.returnValue = 'Storage cleared!';
 });
 

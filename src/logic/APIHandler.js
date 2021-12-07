@@ -59,6 +59,33 @@ const BASE_URL = 'https://dev.roemahku.id/';
     return [tokenData, errorResponse, status];
 };
 
+/**
+ * Get specific branch store
+ * @param id: branch store's ID
+ * @param token: user's token
+ */
+ export const getBranch = async (id, token) => {
+  var errorResponse = null;
+  var tokenData;
+  await axios({
+    method: "get",
+    url: "api/v1/branch-store/" + id,
+    baseURL: BASE_URL,
+    headers: {
+        "Authorization": "Bearer " + token,
+    },
+    timeout: 30000,
+    timeoutErrorMessage: "Request telah melebihi 30s. Silahkan coba lagi."
+  })
+    .then(function(response) {
+      tokenData = response.data;
+    })
+    .catch(function(error) {
+      errorResponse = handleError(error);
+    });
+  return [tokenData, errorResponse];
+};
+
 // ------------------------------------------------------------------------------------------
 
 /**
