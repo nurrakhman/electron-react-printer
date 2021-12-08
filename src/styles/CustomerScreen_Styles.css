@@ -1,0 +1,15 @@
+#sub-header {
+    padding: 0px 25px;
+}
+
+#customer-cart {
+    padding: 10px 50px;
+    padding-left: 5px;
+}
+
+#footer-cart {
+    padding: 10px 50px;
+    position: absolute;
+    bottom: 0;
+    border-top: solid 3px var(--main-dark-green);
+}

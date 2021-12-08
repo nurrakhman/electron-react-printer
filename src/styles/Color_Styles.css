@@ -16,7 +16,8 @@
 
 .primary-btn.MuiButton-root,
 #sidebar .active-link .MuiListItem-button.sidebar-item,
-#sidebar .active-link .MuiListItemIcon-root {
+#sidebar .active-link .MuiListItemIcon-root,
+#sub-header {
     color: white;
     background-color: var(--main-dark-green);
 }
@@ -49,6 +50,7 @@
     border-color: var(--main-dark-green);
 }
 
+.sub-discount p,
 .item-discount p,
 .item-discount span {
     color: var(--main-orange);

@@ -203,8 +203,7 @@ export default function SalesPage() {
             );
             // Jika produk sudah ada di cart
             if ( isDuplicate.length > 0 ) {
-                let tax = 0, onlyTax = 0;
-                let localDisc = 0, lastDisc = 0, currDisc = 0;
+                let tax = 0, localDisc = 0, lastDisc = 0, currDisc = 0;
                 result.forEach(res => {
                     // Update hanya atribut produk yang dipilih
                     if ( res.product_code === isDuplicate[0].product_code ) {
@@ -257,18 +256,15 @@ export default function SalesPage() {
                             currDisc = Math.ceil(total
                                 * unformatPrice(currDiscount.discount) / 100);
                             tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                            onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                         else if ( currDiscount.type === 'rupiah' ) {
                             currDisc = unformatPrice(currDiscount.discount);
                             tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                            onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                         else {
                             tax = Math.ceil(total * (100 + taxValue) / 100);
-                            onlyTax = Math.ceil(total * taxValue / 100);
                             setSubtotal(formatToPrice(tax));
                         }
                     }
@@ -276,8 +272,8 @@ export default function SalesPage() {
                 setItemList(result);
                 let subtotalData = [
                     {
-                        discount: formatToPrice(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc),
-                        tax: formatToPrice(onlyTax),
+                        discount: currDiscount,
+                        tax: currTax,
                         total: formatToPrice(tax),
                     },
                     result,
@@ -358,18 +354,15 @@ export default function SalesPage() {
                         currDisc = Math.ceil(total
                             * unformatPrice(currDiscount.discount) / 100);
                         tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                        onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
                     else if ( currDiscount.type === 'rupiah' ) {
                         currDisc = unformatPrice(currDiscount.discount);
                         tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                        onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
                     else {
                         tax = Math.ceil(total * (100 + taxValue) / 100);
-                        onlyTax = Math.ceil(total * taxValue / 100);
                         setSubtotal(formatToPrice(tax));
                     }
 
@@ -378,8 +371,8 @@ export default function SalesPage() {
                     setItemList(result);
                     let subtotalData = [
                         {
-                            discount: formatToPrice(totalDiscount + localDisc + currDisc - applyToAllDisc),
-                            tax: formatToPrice(onlyTax),
+                            discount: currDiscount,
+                            tax: currTax,
                             total: formatToPrice(tax),
                         },
                         result,
@@ -497,19 +490,17 @@ export default function SalesPage() {
                     currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
                     setApplyToAllDisc(currDisc);
                     tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                    onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
                 }
                 else if ( currDiscount.type === 'rupiah' ) {
                     currDisc = unformatPrice(currDiscount.discount);
                     tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
-                    onlyTax = Math.ceil((total - currDisc) * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
                 }
                 else {
                     tax = Math.ceil(total * (100 + taxValue) / 100);
-                    onlyTax = Math.ceil(total * taxValue / 100);
                     setSubtotal(formatToPrice(tax));
+                    setApplyToAllDisc(0);
                 }
             }
         });
@@ -522,8 +513,8 @@ export default function SalesPage() {
         // Send data to customer layer
         let subtotalData = [
             {
-                discount: formatToPrice(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc),
-                tax: formatToPrice(onlyTax),
+                discount: currDiscount,
+                tax: currTax,
                 total: formatToPrice(tax),
             },
             result,
@@ -566,7 +557,6 @@ export default function SalesPage() {
             currTotal = total;
             setSubtotalPure(total);
             currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
-            onlyTax = Math.ceil((total - currDisc - applyToAllDisc) * taxValue / 100);
             total = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
         }
         else {
@@ -575,7 +565,6 @@ export default function SalesPage() {
                 - (removedProduct.quantity * unformatPrice(removedProduct.selling_price));
             currTotal = total;
             setSubtotalPure(total);
-            onlyTax = Math.ceil((total - applyToAllDisc)  * taxValue / 100);
             total = Math.ceil(total  * (100 + taxValue) / 100);
         }
         setSubtotal(formatToPrice(total));
@@ -583,8 +572,8 @@ export default function SalesPage() {
         // Send data to customer layer
         let subtotalData = [
             {
-                discount: formatToPrice(totalDiscount + currDisc - lastDisc),
-                tax: onlyTax < 0? "Rp 0" : formatToPrice(onlyTax),
+                discount: currDiscount,
+                tax: currTax,
                 total: formatToPrice(currTotal),
             },
             result,
@@ -601,7 +590,6 @@ export default function SalesPage() {
             tax = subtotalPure - Math.ceil(subtotalPure
                 * unformatPrice(temp.discount) / 100);
             totalDisc = Math.ceil(subtotalPure * unformatPrice(temp.discount) / 100);
-            onlyTax = Math.ceil(tax * taxValue / 100);
             tax = Math.ceil(tax * (100 + taxValue) / 100);
             setSubtotal(formatToPrice(tax));
         }
@@ -610,7 +598,6 @@ export default function SalesPage() {
             const result = unformatPrice(temp.discount);
             totalDisc = result;
             tax = Math.ceil((subtotalPure - result) * (100 + taxValue) / 100);
-            onlyTax = Math.ceil((subtotalPure - result) * taxValue / 100);
             setSubtotal(formatToPrice(tax));
         }
         // User tidak memakai diskon
@@ -618,7 +605,6 @@ export default function SalesPage() {
             // Tambah subtotal dengan harga diskon sebelumnya
             if ( currDiscount.type !== 'null' ) {
                 tax = Math.ceil(subtotalPure * (100 + taxValue) / 100);
-                onlyTax = Math.ceil(subtotalPure * taxValue / 100);
                 setSubtotal(formatToPrice(tax));
             }
         }
@@ -628,8 +614,8 @@ export default function SalesPage() {
         // Send data to customer layer
         let subtotalData = [
             {
-                discount: formatToPrice(totalDiscount + totalDisc - applyToAllDisc),
-                tax: formatToPrice(onlyTax),
+                discount: discount,
+                tax: currTax,
                 total: formatToPrice(tax),
             },
             itemList,

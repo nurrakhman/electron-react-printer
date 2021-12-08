@@ -1,25 +1,85 @@
 import React, { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
+import { formatToPrice, unformatPrice } from "../logic/Handler";
 import "../styles/CustomerScreen_Styles.css";
 
 const { ipcRenderer } = require('electron');
 
 function WinB() {
   
-  const [discount, setDiscount] = useState("Rp 0");
-  const [tax, setTax] = useState("Rp 0");
+  const [discount, setDiscount] = useState({
+    name: null,
+    value: null,
+    total: "Rp 0",
+  });
+  const [tax, setTax] = useState({
+    name: null,
+    value: null,
+    total: "Rp 0",
+  });
   const [subtotal, setSubtotal] = useState("Rp 0");
   const [list, setList] = useState([]);
 
   useEffect( () => {
     ipcRenderer.on('update-data-label', (_, data) => {
-      const overallData = JSON.parse(data);
-      setDiscount(overallData[1].length > 0? overallData[0].discount : "Rp 0");
-      setTax(overallData[0].tax);
-      setSubtotal(overallData[0].total);
-      setList(overallData[1]);
+      if ( data !== "reset" ) {
+        const overallData = JSON.parse(data);
+        calculateData(overallData);
+        setSubtotal(overallData[0].total);
+        setList(overallData[1]);
+      }
+      else {
+        setList([]);
+        setSubtotal("Rp 0");
+        setTax({ name: null, value: null, total: "Rp 0" });
+        setDiscount({ name: null, value: null, total: "Rp 0" });
+      }
     });
   }, []);
+
+  const calculateData = (data) => {
+    const products = data[1];
+    let totalProductPrice = 0;
+    let totalProductDiscount = 0;
+    let totalTax = 0, totalDiscount = 0;
+    products.forEach(res => {
+      totalProductPrice += unformatPrice(res.total_price);
+      totalProductDiscount += unformatPrice(res.discount);
+    });
+    if ( data[0].discount.type === "persen" ) {
+      let percenDisc = unformatPrice(data[0].discount.discount);
+      totalDiscount = totalProductDiscount + Math.ceil(
+        (totalProductPrice - totalProductDiscount) * percenDisc / 100
+      );
+      percenDisc = Math.ceil(
+        (totalProductPrice - totalProductDiscount) * (100 - percenDisc) / 100
+      );
+      totalTax = Math.ceil(percenDisc * data[0].tax.value / 100);
+    }
+    else if ( data[0].discount.type === "rupiah" ) {
+      const flatDisc = unformatPrice(data[0].discount.discount);
+      totalTax = Math.ceil(
+        (totalProductPrice - totalProductDiscount - flatDisc) * data[0].tax.value / 100
+      );
+      totalDiscount = totalProductDiscount + flatDisc;
+    }
+    else {
+      totalTax = Math.ceil(
+        (totalProductPrice - totalProductDiscount) * data[0].tax.value / 100
+      );
+      totalDiscount = totalProductDiscount;
+    }
+    setTax({
+      name: data[0].tax.name,
+      value: data[0].tax.value,
+      total: formatToPrice(totalTax),
+    });
+    setDiscount({
+      name: data[0].discount.value? data[0].discount.label : null,
+      value: data[0].discount.discount,
+      total: formatToPrice(totalDiscount),
+    });
+  }
   
   return (
     <Grid container id="sub-container">
@@ -96,24 +156,29 @@ function WinB() {
 
       {/* Footer */}
       <Grid container id="footer-cart">
-        <Grid item xs={7}></Grid>
-        <Grid item xs={2}>
-          <h3 className="text-right">Diskon</h3>
+        <Grid item xs={9}>
+          <h3 className="text-right">
+            {discount.name?
+              `Diskon ${discount.name} (${discount.value})` : "Diskon"
+            }
+          </h3>
         </Grid>
         <Grid item xs={3}>
-          <h3 className="text-right">{discount}</h3>
+          <h3 className="text-right">{discount.total}</h3>
         </Grid>
 
-        <Grid item xs={7}></Grid>
-        <Grid item xs={2}>
-          <h3 className="text-right">Pajak</h3>
+        <Grid item xs={9}>
+          <h3 className="text-right">
+            {tax.name?
+              `Pajak ${tax.name} (${tax.value}%)` : "Pajak"
+            }
+          </h3>
         </Grid>
         <Grid item xs={3}>
-          <h3 className="text-right">{tax}</h3>
+          <h3 className="text-right">{tax.total}</h3>
         </Grid>
 
-        <Grid item xs={7}></Grid>
-        <Grid item xs={2}>
+        <Grid item xs={9}>
           <h3 className="text-right">Subtotal</h3>
         </Grid>
         <Grid item xs={3}>

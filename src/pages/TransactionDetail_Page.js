@@ -632,6 +632,33 @@ export default function TransactionDetail(props) {
         }
     };
 
+    const handleNavigation = async () => {
+        ipcRenderer.send('update-data-tampilan', 'reset');
+        if ( isPaid ) {
+            history.push({
+                pathname: "/penjualan",
+                state: { isRefresh: true },
+            });
+        }
+        else {
+            history.replace({
+                pathname: "/penjualan",
+                state: {
+                    itemList: itemList,
+                    subtotalPure: subtotalPure,
+                    totalPrice: subtotal,
+                    token: token,
+                    currTax: currTax,
+                    currMethod: currMethod,
+                    currDiscount: currDiscount,
+                    paymentOptions: paymentOptions,
+                    paymentCategories: paymentCategories,
+                    selectedMethod: selectedMethod,
+                }
+            });
+        }
+    }
+
     return (
         <Grid container className="main-container">
             <Snackbar open={openSuccessAlert} autoHideDuration={2500} onClose={() => setOpenSuccessAlert(false)}>
@@ -919,33 +946,7 @@ export default function TransactionDetail(props) {
                                             ${isPaid? "primary-btn" : "secondary-btn"}
                                             full-btn thick-btn
                                         `}
-                                        onClick={() => {
-                                            if ( isPaid ) {
-                                                history.push({
-                                                    pathname: "/penjualan",
-                                                    state: { isRefresh: true },
-                                                });
-                                            }
-                                            else {
-                                                setDigit('xxxx');
-                                                setIsPaid(false);
-                                                history.replace({
-                                                    pathname: "/penjualan",
-                                                    state: {
-                                                        itemList: itemList,
-                                                        subtotalPure: subtotalPure,
-                                                        totalPrice: subtotal,
-                                                        token: token,
-                                                        currTax: currTax,
-                                                        currMethod: currMethod,
-                                                        currDiscount: currDiscount,
-                                                        paymentOptions: paymentOptions,
-                                                        paymentCategories: paymentCategories,
-                                                        selectedMethod: selectedMethod,
-                                                    }
-                                                });
-                                            }
-                                        }}
+                                        onClick={handleNavigation}
                                     >
                                         {finishText}
                                     </Button>
