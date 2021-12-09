@@ -35,6 +35,10 @@ export default function HeaderCom(props) {
                 cancelText="Cancel"
                 onClose={() => setOpenModal(false)}
                 onClickCancel={() => setOpenModal(false)}
+                refreshPage={() =>{
+                    props.refreshPage();
+                    setOpenModal(false);
+                }}
             />
             <AppBar position="sticky" id="header-container">
                 <Toolbar>

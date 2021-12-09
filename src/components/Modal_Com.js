@@ -19,24 +19,20 @@ export default function CustomModal(props) {
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [alertText, setAlertText] = useState('');
 
-    const sleep = (milliseconds) => {
-        return new Promise(resolve => setTimeout(resolve, milliseconds));
-    };
-
     const handleSubmit = async () => {
         setIsLoading(true);
         const token = ipcRenderer.sendSync('get-token');
         let resp = await getSalesData(token);
         if ( resp[0] && resp[0].status === 200 ) {
             ipcRenderer.sendSync('store-data', JSON.stringify(resp[0].data));
+            ipcRenderer.send('update-data-tampilan', 'refresh');
             setAlertText('Berhasil memuat ulang data.');
             setOpenSuccessAlert(true);
-            await sleep(1500);
             if ( history.location.pathname === "/penjualan" ) {
-                history.go(0);
+                props.refreshPage();
             }
             else {
-                history.replace("/penjualan");
+                history.push("/penjualan");
             }
         }
         else {

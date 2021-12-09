@@ -624,6 +624,17 @@ export default function SalesPage() {
         setTotalDiscount(totalDiscount + totalDisc - applyToAllDisc);
     }
 
+    const refreshPage = () => {
+        const token = ipcRenderer.sendSync('get-token');
+        setToken(token);
+        setItemList([]);
+        setSubtotalPure(0);
+        setSubtotal("Rp 0");
+        setCurrMethod(paymentOptions[0]);
+        setCurrDiscount(discountOptions[0]);
+        setSelectedMethod(paymentOptions[0]);
+    }
+
     const goToTransasctionDetail = () => {
         history.push({
             pathname: "/detail-transaksi",
@@ -657,7 +668,7 @@ export default function SalesPage() {
                 modalTitle="Token Anda Sudah Expire"
             />
             <Grid item xs={12}>
-                <HeaderCom title="Penjualan" />
+                <HeaderCom title="Penjualan" refreshPage={refreshPage} />
                 <Grid container className="main-content">
                     <Grid item xs={7} className="left-content">
                         <Grid container>

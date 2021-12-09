@@ -23,14 +23,17 @@ function WinB() {
 
   useEffect( () => {
     ipcRenderer.on('update-data-label', (_, data) => {
-      if ( data !== "reset" ) {
+      if ( data !== "reset" && data !== "refresh" ) {
         const overallData = JSON.parse(data);
         calculateData(overallData);
         setSubtotal(overallData[0].total);
         setList(overallData[1]);
       }
-      else {
+      else if ( data === "refresh" ) {
         resetData();
+      }
+      else {
+        resetData(true);
       }
     });
   }, []);
@@ -83,14 +86,17 @@ function WinB() {
     });
   }
 
-  const resetData = async () => {
-    setShowThanks(true);
+  const resetData = async (isShowThanks) => {
+    console.log(isShowThanks)
+    if ( isShowThanks ) setShowThanks(true);
     setList([]);
     setSubtotal("Rp 0");
     setTax({ name: null, value: null, total: "Rp 0" });
     setDiscount({ name: null, value: null, total: "Rp 0" });
-    await sleep(2500);
-    setShowThanks(false);
+    if ( isShowThanks ) {
+      await sleep(2500);
+      setShowThanks(false);
+    }
   }
   
   return ( showThanks ?
@@ -106,16 +112,16 @@ function WinB() {
         <Grid item xs={1}>
           <h2 className="text-center">No</h2>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4} md={5} lg={6}>
           <h2>Produk</h2>
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} lg={1}>
           <h2 className="text-center">Kuantitas</h2>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={3} md={2} lg={2}>
           <h2 className="text-right">Harga Satuan</h2>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={2} lg={2}>
           <h2 className="text-right">Harga Total</h2>
         </Grid>
 
