@@ -17,7 +17,7 @@
 .primary-btn.MuiButton-root,
 #sidebar .active-link .MuiListItem-button.sidebar-item,
 #sidebar .active-link .MuiListItemIcon-root,
-#sub-header {
+#sub-header, #sub-container-thanks {
     color: white;
     background-color: var(--main-dark-green);
 }

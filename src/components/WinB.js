@@ -7,6 +7,7 @@ const { ipcRenderer } = require('electron');
 
 function WinB() {
   
+  const [showThanks, setShowThanks] = useState(false);
   const [discount, setDiscount] = useState({
     name: null,
     value: null,
@@ -29,13 +30,14 @@ function WinB() {
         setList(overallData[1]);
       }
       else {
-        setList([]);
-        setSubtotal("Rp 0");
-        setTax({ name: null, value: null, total: "Rp 0" });
-        setDiscount({ name: null, value: null, total: "Rp 0" });
+        resetData();
       }
     });
   }, []);
+
+  const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  };
 
   const calculateData = (data) => {
     const products = data[1];
@@ -80,9 +82,22 @@ function WinB() {
       total: formatToPrice(totalDiscount),
     });
   }
+
+  const resetData = async () => {
+    setShowThanks(true);
+    setList([]);
+    setSubtotal("Rp 0");
+    setTax({ name: null, value: null, total: "Rp 0" });
+    setDiscount({ name: null, value: null, total: "Rp 0" });
+    await sleep(2500);
+    setShowThanks(false);
+  }
   
-  return (
-    <Grid container id="sub-container">
+  return ( showThanks ?
+    <Grid container id="sub-container-thanks">
+      <h1>Terima Kasih Sudah Berbelanja Di Tempat Kami!</h1>
+    </Grid>
+    : <Grid container id="sub-container">
       <Grid item xs={12} id="sub-header">
         <h1>Daftar Belanja</h1>
       </Grid>

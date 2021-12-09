@@ -1,3 +1,16 @@
+#sub-container-thanks {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10vw;
+    padding-right: 10vw;
+}
+#sub-container-thanks h1 {
+    font-size: 4rem;
+    line-height: 7rem;
+    text-align: center;
+}
+
 #sub-header {
     padding: 0px 25px;
 }
@@ -17,4 +30,15 @@
     position: absolute;
     bottom: 0;
     border-top: solid 3px var(--main-dark-green);
+}
+
+@media (min-height: 500px) and (max-height: 620px) {
+    #sub-container-thanks h1 {
+        font-size: 2.5rem;
+    }
+}
+@media (max-height: 768px) {
+    #sub-container-thanks h1 {
+        font-size: 3.5rem;
+    }
 }

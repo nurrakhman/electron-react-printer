@@ -633,8 +633,8 @@ export default function TransactionDetail(props) {
     };
 
     const handleNavigation = async () => {
-        ipcRenderer.send('update-data-tampilan', 'reset');
         if ( isPaid ) {
+            ipcRenderer.send('update-data-tampilan', 'reset');
             history.push({
                 pathname: "/penjualan",
                 state: { isRefresh: true },
