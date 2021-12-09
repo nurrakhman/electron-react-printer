@@ -6,6 +6,11 @@
     padding: 10px 50px;
     padding-left: 5px;
 }
+#preview-items {
+    width: 100%;
+    overflow: auto;
+    max-height: 385px;
+}
 
 #footer-cart {
     padding: 10px 50px;

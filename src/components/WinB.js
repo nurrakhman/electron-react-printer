@@ -104,54 +104,56 @@ function WinB() {
           <h2 className="text-right">Harga Total</h2>
         </Grid>
 
-        {list.map((res, idx) => {
-          return (
-            <Grid container key={res._id}>
-              <Grid item xs={1}>
-                <p className="text-center">{idx+1}</p>
-              </Grid>
-              <Grid item xs={6}>
-                <p>{res.product_code + " - " + res.name}</p>
-              </Grid>
-              <Grid item xs={1}>
-                <p className="text-center">{res.quantity}</p>
-              </Grid>
-              <Grid item xs={2}>
-                <p className="text-right">{res.selling_price}</p>
-              </Grid>
-              <Grid item xs={2}>
-                <p className="text-right">{res.total_price}</p>
-              </Grid>
+        <div id="preview-items">
+          {list.map((res, idx) => {
+            return (
+              <Grid container key={res._id}>
+                <Grid item xs={1}>
+                  <p className="text-center">{idx+1}</p>
+                </Grid>
+                <Grid item xs={6}>
+                  <p>{res.product_code + " - " + res.name}</p>
+                </Grid>
+                <Grid item xs={1}>
+                  <p className="text-center">{res.quantity}</p>
+                </Grid>
+                <Grid item xs={2}>
+                  <p className="text-right">{res.selling_price}</p>
+                </Grid>
+                <Grid item xs={2}>
+                  <p className="text-right">{res.total_price}</p>
+                </Grid>
 
-              {res.discount !== "Rp 0"?
-                <Grid container className="sub-discount">
-                    <Grid item xs={1}></Grid>
-                    <Grid item xs={9} sm={9}>
-                        <p>Diskon</p>
-                    </Grid>
-                    <Grid item xs={2} sm={2}>
-                        <p className="text-right">{res.discount}</p>
-                    </Grid>
-                </Grid> : <></>
-            }
-            {res.buyxgety?
-                <Grid container className="sub-discount">
-                    <Grid item xs={1}></Grid>
-                    <Grid item xs={6}>
-                        <p>{res.buyxgety.name}</p>
-                    </Grid>
-                    <Grid item xs={1}>
-                        <p className="text-center">{res.buyxgety.qty}</p>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <p className="text-right">Rp 0</p>
-                        {/* <p className="text-right">{res.buyxgety.price}</p> */}
-                    </Grid>
-                </Grid> : <></>
-            }
-            </Grid>
-          )
-        })}
+                {res.discount !== "Rp 0"?
+                  <Grid container className="sub-discount">
+                      <Grid item xs={1}></Grid>
+                      <Grid item xs={9} sm={9}>
+                          <p>Diskon</p>
+                      </Grid>
+                      <Grid item xs={2} sm={2}>
+                          <p className="text-right">{res.discount}</p>
+                      </Grid>
+                  </Grid> : <></>
+              }
+              {res.buyxgety?
+                  <Grid container className="sub-discount">
+                      <Grid item xs={1}></Grid>
+                      <Grid item xs={6}>
+                          <p>{res.buyxgety.name}</p>
+                      </Grid>
+                      <Grid item xs={1}>
+                          <p className="text-center">{res.buyxgety.qty}</p>
+                      </Grid>
+                      <Grid item xs={4}>
+                          <p className="text-right">Rp 0</p>
+                          {/* <p className="text-right">{res.buyxgety.price}</p> */}
+                      </Grid>
+                  </Grid> : <></>
+              }
+              </Grid>
+            )
+          })}
+        </div>
       </Grid>
 
       {/* Footer */}
