@@ -24,7 +24,8 @@ function createMainWindow() {
 		minWidth: 800,
 		minHeight: 600,
 		show: false,
-		icon: `${__dirname}/assets/icon.png`,
+		title: "Kasir Senwell",
+		icon: `${__dirname}/assets/s-logo.png`,
 		webPreferences: {
 			nodeIntegration: true,
 		},
@@ -36,7 +37,8 @@ function createMainWindow() {
 		minWidth: 800,
 		minHeight: 600,
 		show: false,
-		icon: `${__dirname}/assets/icon.png`,
+		title: "Preview Pembayaran",
+		icon: `${__dirname}/assets/s-logo.png`,
 		webPreferences: {
 			nodeIntegration: true,
 		},
@@ -83,6 +85,14 @@ function createMainWindow() {
 
 	mainWindow.loadURL(indexPath)
 	subWindow.loadURL(subPath)
+
+	// Prevent app title from updating to default title
+	mainWindow.on('page-title-updated', function(e) {
+		e.preventDefault()
+	});
+	subWindow.on('page-title-updated', function(e) {
+		e.preventDefault()
+	});
 
 	// Don't show until we are ready and loaded
 	mainWindow.once('ready-to-show', () => {
