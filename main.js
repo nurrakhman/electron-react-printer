@@ -114,7 +114,13 @@ function createMainWindow() {
 
 	    ipcMain.on('update-data-tampilan', (event, arg) => {
         // Request to update the label in the renderer process of the second window
-        subWindow.webContents.send('update-data-label', arg);
+		
+		try {
+			subWindow.webContents.send('update-data-label', arg);
+		}
+		catch(e) {
+			console.log(e);
+		}
     });
 
 	mainWindow.on('closed', () => (mainWindow = null))
@@ -200,6 +206,50 @@ ipcMain.on('get-logo', (event) => {
 		path: path.join(__dirname, 'assets/logo.png'),
 	}
 	event.returnValue = res;
+});
+
+// Open transaction preview window
+ipcMain.on('open-sub-window', (event) => {
+	subWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		minWidth: 800,
+		minHeight: 600,
+		show: false,
+		title: "Preview Pembayaran",
+		icon: `${__dirname}/assets/s-logo.png`,
+		webPreferences: {
+			nodeIntegration: true,
+		},
+	})
+	let subPath
+	if (isDev && process.argv.indexOf('--noDevServer') === -1) {
+		subPath = url.format({
+			protocol: 'http:',
+			host: 'localhost:8080',
+			hash:'/tampilan',
+			pathname: 'index.html',
+			slashes: true,
+		})
+	}
+	else {
+		subPath = url.format({
+			protocol: 'file:',
+			hash:'/tampilan',
+			pathname: path.join(__dirname, 'dist', 'index.html'),
+			slashes: true,
+		})
+	}
+	subWindow.maximize();
+	subWindow.loadURL(subPath)
+	subWindow.on('page-title-updated', function(e) {
+		e.preventDefault()
+	});
+	subWindow.once('ready-to-show', () => {
+		subWindow.show()
+	})
+	subWindow.on('closed', () => (subWindow = null))
+	event.returnValue = 'window opened';
 });
 
 // Clear local storage

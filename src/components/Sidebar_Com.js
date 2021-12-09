@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PrinterIcon from '@material-ui/icons/Print';
+import LaunchIcon from '@material-ui/icons/Launch';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import logo from '../../assets/logo.png';
 import '../styles/Sidebar_Styles.css';
@@ -79,6 +80,15 @@ class SwipeableDrawer_Com extends Component {
                   <ListItemText className="sidebar-item-text">Pengaturan Printer</ListItemText>
                 </ListItem>
               </NavLink>
+
+              <ListItem
+                button
+                className="sidebar-item"
+                onClick={() => ipcRenderer.sendSync('open-sub-window')}
+              >
+                <ListItemIcon className="sidebar-icon"><LaunchIcon /></ListItemIcon>
+                <ListItemText className="sidebar-item-text">Buka Tampilan Preview</ListItemText>
+              </ListItem>
 
               {/* Change Password Link */}
               {/* <NavLink
