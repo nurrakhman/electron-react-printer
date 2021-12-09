@@ -1,5 +1,6 @@
 import React from "react";
 import { HashRouter, Route } from "react-router-dom";
+import { createTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import "../styles/Color_Styles.css";
 import "../styles/Default_Styles.css";
 
@@ -11,8 +12,13 @@ import SalesPage from "../pages/Sales_Page";
 import TransactionDetailPage from "../pages/TransactionDetail_Page";
 import PrinterSettingsPage from "../pages/PrinterSettings_Page";
 
+const theme = createTheme({
+
+});
+
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <HashRouter>
       <div>
         {/* Main Windows */}
@@ -24,6 +30,7 @@ function App() {
         <Route exact path="/tampilan" component={WinB} />
       </div>
     </HashRouter>
+    </ThemeProvider>
   );
 }
 
