@@ -17,6 +17,7 @@ if (
 	isDev = true
 }
 
+var isSubOpened = true;
 var isQuitMain = false;
 
 function createMainWindow() {
@@ -140,7 +141,10 @@ function createMainWindow() {
 		subWindow.show()
 	})
 
-	subWindow.on('closed', () => (subWindow = null))
+	subWindow.on('closed', () => {
+		isSubOpened = false;
+		subWindow = null;
+	})
 }
 
 app.on('ready', createMainWindow)
@@ -208,46 +212,55 @@ ipcMain.on('get-logo', (event) => {
 
 // Open transaction preview window
 ipcMain.on('open-sub-window', (event) => {
-	subWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
-		minWidth: 800,
-		minHeight: 600,
-		show: false,
-		title: "Preview Pembayaran",
-		icon: `${__dirname}/assets/s-logo.png`,
-		webPreferences: {
-			nodeIntegration: true,
-		},
-	})
-	let subPath
-	if (isDev && process.argv.indexOf('--noDevServer') === -1) {
-		subPath = url.format({
-			protocol: 'http:',
-			host: 'localhost:8080',
-			hash:'/tampilan',
-			pathname: 'index.html',
-			slashes: true,
+	if ( !isSubOpened ) {
+		isSubOpened = true;
+		subWindow = new BrowserWindow({
+			width: 800,
+			height: 600,
+			minWidth: 800,
+			minHeight: 600,
+			show: false,
+			title: "Preview Pembayaran",
+			icon: `${__dirname}/assets/s-logo.png`,
+			webPreferences: {
+				nodeIntegration: true,
+			},
 		})
+		let subPath
+		if (isDev && process.argv.indexOf('--noDevServer') === -1) {
+			subPath = url.format({
+				protocol: 'http:',
+				host: 'localhost:8080',
+				hash:'/tampilan',
+				pathname: 'index.html',
+				slashes: true,
+			})
+		}
+		else {
+			subPath = url.format({
+				protocol: 'file:',
+				hash:'/tampilan',
+				pathname: path.join(__dirname, 'dist', 'index.html'),
+				slashes: true,
+			})
+		}
+		subWindow.maximize();
+		subWindow.loadURL(subPath)
+		subWindow.on('page-title-updated', function(e) {
+			e.preventDefault()
+		});
+		subWindow.once('ready-to-show', () => {
+			subWindow.show()
+		})
+		subWindow.on('closed', () => {
+			isSubOpened = false;
+			subWindow = null;
+		})
+		event.returnValue = 'window opened';
 	}
 	else {
-		subPath = url.format({
-			protocol: 'file:',
-			hash:'/tampilan',
-			pathname: path.join(__dirname, 'dist', 'index.html'),
-			slashes: true,
-		})
+		event.returnValue = false;
 	}
-	subWindow.maximize();
-	subWindow.loadURL(subPath)
-	subWindow.on('page-title-updated', function(e) {
-		e.preventDefault()
-	});
-	subWindow.once('ready-to-show', () => {
-		subWindow.show()
-	})
-	subWindow.on('closed', () => (subWindow = null))
-	event.returnValue = 'window opened';
 });
 
 // Clear local storage

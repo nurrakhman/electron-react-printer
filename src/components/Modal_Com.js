@@ -61,6 +61,14 @@ export default function CustomModal(props) {
                             Login Kembali
                         </Button>
                     </NavLink>
+                    : props.modalType === "ok-only"?
+                        <Button
+                            variant="contained"
+                            className="primary-btn center-align"
+                            onClick={props.onClickCancel}
+                        >
+                            OK
+                        </Button>
                     : <Grid container style={{ marginTop: "30px" }}>
                         <Grid item xs={6}>
                             <Button

@@ -9,6 +9,7 @@ import PrinterIcon from '@material-ui/icons/Print';
 import LaunchIcon from '@material-ui/icons/Launch';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import logo from '../../assets/logo.png';
+import CustomModal from './Modal_Com';
 import '../styles/Sidebar_Styles.css';
 
 const { ipcRenderer } = window.require('electron')
@@ -24,6 +25,7 @@ class SwipeableDrawer_Com extends Component {
     this.state = {
       id: (currID? currID : ""),
       currLocation: currLocation,
+      openModal: false,
     }
   }
 
@@ -36,6 +38,14 @@ class SwipeableDrawer_Com extends Component {
 
   render() {
     return (
+      <>
+      <CustomModal
+        open={this.state.openModal}
+        modalType="ok-only"
+        titleClassName="text-center"
+        modalTitle="Halaman Preview Transaksi Masih Terbuka!"
+        onClickCancel={() => this.setState({ openModal: false })}
+      />
       <SwipeableDrawer
         anchor="left"
         id="sidebar"
@@ -84,29 +94,16 @@ class SwipeableDrawer_Com extends Component {
               <ListItem
                 button
                 className="sidebar-item"
-                onClick={() => ipcRenderer.sendSync('open-sub-window')}
+                onClick={() => {
+                  let resp = ipcRenderer.sendSync('open-sub-window');
+                  if ( !resp ) {
+                    this.setState({ openModal: true });
+                  }
+                }}
               >
                 <ListItemIcon className="sidebar-icon"><LaunchIcon /></ListItemIcon>
                 <ListItemText className="sidebar-item-text">Buka Tampilan Preview</ListItemText>
               </ListItem>
-
-              {/* Change Password Link */}
-              {/* <NavLink
-                activeClassName="active-link"
-                exact
-                isActive={this.onPaths([ "/ganti-password", ])}
-                to="/ganti-password"
-                onClick={() => {
-                  localStorage.removeItem("search");
-                  localStorage.removeItem("tablePage");
-                }}
-                style={{ textDecoration: "none" }}
-              >
-                <ListItem button className="sidebar-item">
-                  <ListItemIcon className="sidebar-icon"><VpnKeyIcon /></ListItemIcon>
-                  <ListItemText className="sidebar-item-text">Ganti Password</ListItemText>
-                </ListItem>
-              </NavLink> */}
     
               {/* Logout Link */}
               <NavLink to="/" style={{ textDecoration: "none" }}>
@@ -123,6 +120,7 @@ class SwipeableDrawer_Com extends Component {
             </React.Fragment>
         </List>
       </SwipeableDrawer>
+      </>
     );
 
   }
