@@ -85,7 +85,6 @@ export default function SalesPage() {
         else {
             resp = await getSalesData(currToken);
         }
-        console.log(resp);
         if ( resp[0] && resp[0].status === 200 ) {
             if ( !dataInStorage ) {
                 ipcRenderer.sendSync('store-data', JSON.stringify(resp[0].data));

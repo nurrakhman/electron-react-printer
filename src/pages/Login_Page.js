@@ -57,7 +57,6 @@ export default function LoginPage() {
         if ( email && password ) {
             if ( emailRegex.test(email) ) {
                 const resp = await hitLogin(email, password);
-                console.log(resp);
                 if ( resp[0] && resp[0].status === 200 ) {
                     const user = resp[0].data;
                     if ( user.jobdesk === "kasir" ) {

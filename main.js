@@ -129,6 +129,9 @@ function createMainWindow() {
 			choice.then(function(res) {
 				// If user agree to close the apps
 				if ( res.response == 0 ) {
+					const store = new Store();
+					store.delete('token');
+					store.delete('data');
 					isQuitMain = true;
 					app.quit();
 				}
