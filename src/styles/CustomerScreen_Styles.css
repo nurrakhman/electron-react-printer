@@ -62,9 +62,18 @@
 
 #footer-cart {
     padding: 10px 50px;
+    padding-left: 25px;
     position: absolute;
     bottom: 0;
     border-top: solid 3px var(--main-dark-green);
+}
+#footer-cart .preview-logo-container {
+    display: flex;
+    align-items: center;
+}
+#footer-cart .preview-logo-container img {
+    width: auto;
+    height: 120px;
 }
 
 @media (min-width: 400px) and (max-width: 1024px) {
@@ -109,6 +118,10 @@
     #footer-cart h3 {
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    #footer-cart .preview-logo-container img {
+        width: auto;
+        height: 100px;
     }
 }
 @media (max-height: 768px) {

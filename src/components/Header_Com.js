@@ -24,6 +24,7 @@ export default function HeaderCom(props) {
                 open={isSidebarOpen}
                 onClose={toggleSidebar("left", false)}
                 onOpen={toggleSidebar("left", true)}
+                sendPreviewData={props.sendPreviewData}
             />
             <CustomModal
                 open={openModal}

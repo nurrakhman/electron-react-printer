@@ -167,6 +167,10 @@ export default function SalesPage() {
         }
     };
 
+    const sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    };
+
     const applySavedData = (savedData) => {
         setIsLoading(true);
         setToken(savedData.token);
@@ -635,6 +639,19 @@ export default function SalesPage() {
         setSelectedMethod(paymentOptions[0]);
     }
 
+    const handleSendPreviewData = async () => {
+        await sleep(2000);
+        let subtotalData = [
+            {
+                discount: currDiscount,
+                tax: currTax,
+                total: subtotal,
+            },
+            itemList,
+        ];
+        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+    }
+
     const goToTransasctionDetail = () => {
         history.push({
             pathname: "/detail-transaksi",
@@ -668,7 +685,11 @@ export default function SalesPage() {
                 modalTitle="Token Anda Sudah Expire"
             />
             <Grid item xs={12}>
-                <HeaderCom title="Penjualan" refreshPage={refreshPage} />
+                <HeaderCom
+                    title="Penjualan"
+                    refreshPage={refreshPage}
+                    sendPreviewData={handleSendPreviewData}
+                />
                 <Grid container className="main-content">
                     <Grid item xs={7} className="left-content">
                         <Grid container>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
 import { formatToPrice, unformatPrice } from "../logic/Handler";
+import logo from "../../assets/logo.png";
 import "../styles/CustomerScreen_Styles.css";
 
 const { ipcRenderer } = require('electron');
@@ -87,7 +88,6 @@ function WinB() {
   }
 
   const resetData = async (isShowThanks) => {
-    console.log(isShowThanks)
     if ( isShowThanks ) setShowThanks(true);
     setList([]);
     setSubtotal("Rp 0");
@@ -179,33 +179,40 @@ function WinB() {
 
       {/* Footer */}
       <Grid container id="footer-cart">
-        <Grid item xs={9}>
-          <h3 className="text-right">
-            {discount.name?
-              `Diskon ${discount.name} (${discount.value})` : "Diskon"
-            }
-          </h3>
+        <Grid item xs={6} className="preview-logo-container">
+          <img src={logo} alt="logo" />
         </Grid>
-        <Grid item xs={3}>
-          <h3 className="text-right">{discount.total}</h3>
-        </Grid>
+        <Grid item xs={6}>
+          <Grid container>
+            <Grid item xs={9}>
+              <h3 className="text-right">
+                {discount.name?
+                  `Diskon ${discount.name} (${discount.value})` : "Diskon"
+                }
+              </h3>
+            </Grid>
+            <Grid item xs={3}>
+              <h3 className="text-right">{discount.total}</h3>
+            </Grid>
 
-        <Grid item xs={9}>
-          <h3 className="text-right">
-            {tax.name?
-              `Pajak ${tax.name} (${tax.value}%)` : "Pajak"
-            }
-          </h3>
-        </Grid>
-        <Grid item xs={3}>
-          <h3 className="text-right">{tax.total}</h3>
-        </Grid>
+            <Grid item xs={9}>
+              <h3 className="text-right">
+                {tax.name?
+                  `Pajak ${tax.name} (${tax.value}%)` : "Pajak"
+                }
+              </h3>
+            </Grid>
+            <Grid item xs={3}>
+              <h3 className="text-right">{tax.total}</h3>
+            </Grid>
 
-        <Grid item xs={9}>
-          <h3 className="text-right">Subtotal</h3>
-        </Grid>
-        <Grid item xs={3}>
-          <h3 className="text-right">{subtotal}</h3>
+            <Grid item xs={9}>
+              <h3 className="text-right">Subtotal</h3>
+            </Grid>
+            <Grid item xs={3}>
+              <h3 className="text-right">{subtotal}</h3>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

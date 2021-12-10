@@ -99,6 +99,9 @@ class SwipeableDrawer_Com extends Component {
                   if ( !resp ) {
                     this.setState({ openModal: true });
                   }
+                  else {
+                    this.props.sendPreviewData();
+                  }
                 }}
               >
                 <ListItemIcon className="sidebar-icon"><LaunchIcon /></ListItemIcon>
