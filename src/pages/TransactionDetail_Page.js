@@ -571,7 +571,7 @@ export default function TransactionDetail(props) {
         };
 
         if ( activePrinter ) {
-            const dataToPrint = data? data : printData;
+            const dataToPrint = printData? printData : data;
             PosPrinter.print(dataToPrint, options)
               .then(() => {})
               .catch(error => {
