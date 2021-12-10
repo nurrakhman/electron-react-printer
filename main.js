@@ -17,6 +17,8 @@ if (
 	isDev = true
 }
 
+var isQuitMain = false;
+
 function createMainWindow() {
 	mainWindow = new BrowserWindow({
 		width: 800,
@@ -112,23 +114,26 @@ function createMainWindow() {
 		}
     });
 
-	// mainWindow.on('close', function(e){
-	// 	e.preventDefault();
-	// 	var choice = require('electron').dialog.showMessageBox(mainWindow,
-	// 		{
-	// 			type: 'question',
-	// 			buttons: ['Yes', 'No'],
-	// 			title: 'Confirm',
-	// 			message: 'Are you sure you want to quit?'
-	// 		}
-	// 	);
-	// 	choice.then(function(res) {
-	// 		// If user agree to close the apps
-	// 		if ( res.response == 0 ) {
-	// 			app.quit();
-	// 		}
-	// 	})
-	// });
+	mainWindow.on('close', function(e){
+		if ( !isQuitMain ) {
+			e.preventDefault();
+			var choice = require('electron').dialog.showMessageBox(mainWindow,
+				{
+					type: 'question',
+					buttons: ['Yes', 'No'],
+					title: 'Confirm',
+					message: 'Are you sure you want to quit?'
+				}
+			);
+			choice.then(function(res) {
+				// If user agree to close the apps
+				if ( res.response == 0 ) {
+					isQuitMain = true;
+					app.quit();
+				}
+			})
+		}
+	});
 	mainWindow.on('closed', () => (mainWindow = null))
 
 	subWindow.once('ready-to-show', () => {
