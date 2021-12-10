@@ -26,6 +26,7 @@ function createMainWindow() {
 		show: false,
 		title: "Kasir Senwell",
 		icon: `${__dirname}/assets/s-logo.png`,
+		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,
 		},
@@ -39,6 +40,7 @@ function createMainWindow() {
 		show: false,
 		title: "Preview Pembayaran",
 		icon: `${__dirname}/assets/s-logo.png`,
+		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,
 		},
@@ -97,19 +99,6 @@ function createMainWindow() {
 	// Don't show until we are ready and loaded
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show()
-
-		// Open devtools if dev
-		// if (isDev) {
-		// 	const {
-		// 		default: installExtension,
-		// 		REACT_DEVELOPER_TOOLS,
-		// 	} = require('electron-devtools-installer')
-
-		// 	installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-		// 		console.log('Error loading React DevTools: ', err)
-		// 	)
-		// 	mainWindow.webContents.openDevTools()
-		// }
 	})
 
 	    ipcMain.on('update-data-tampilan', (event, arg) => {
@@ -123,23 +112,27 @@ function createMainWindow() {
 		}
     });
 
+	// mainWindow.on('close', function(e){
+	// 	e.preventDefault();
+	// 	var choice = require('electron').dialog.showMessageBox(mainWindow,
+	// 		{
+	// 			type: 'question',
+	// 			buttons: ['Yes', 'No'],
+	// 			title: 'Confirm',
+	// 			message: 'Are you sure you want to quit?'
+	// 		}
+	// 	);
+	// 	choice.then(function(res) {
+	// 		// If user agree to close the apps
+	// 		if ( res.response == 0 ) {
+	// 			app.quit();
+	// 		}
+	// 	})
+	// });
 	mainWindow.on('closed', () => (mainWindow = null))
 
 	subWindow.once('ready-to-show', () => {
 		subWindow.show()
-
-		// Open devtools if dev
-		// if (isDev) {
-		// 	const {
-		// 		default: installExtension,
-		// 		REACT_DEVELOPER_TOOLS,
-		// 	} = require('electron-devtools-installer')
-
-		// 	installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-		// 		console.log('Error loading React DevTools: ', err)
-		// 	)
-		// 	subWindow.webContents.openDevTools()
-		// }
 	})
 
 	subWindow.on('closed', () => (subWindow = null))
@@ -203,7 +196,7 @@ ipcMain.on('get-address', (event) => {
 // Get image logo path
 ipcMain.on('get-logo', (event) => {
 	let res = {
-		path: path.join(__dirname, 'assets/logo.png'),
+		path: path.join(__dirname, 'assets/logo-print.png'),
 	}
 	event.returnValue = res;
 });

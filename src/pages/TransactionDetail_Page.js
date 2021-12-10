@@ -336,7 +336,7 @@ export default function TransactionDetail(props) {
                 type: "text",
                 value: res.name,
                 style: `text-align: left; width: 210px; margin-left: -5px`,
-                css: { "font-size": "11px" }
+                css: { "font-size": "11px", "font-family": "Tahoma" }
             });
             tableData.push({
                 type: 'table',
@@ -345,22 +345,22 @@ export default function TransactionDetail(props) {
                     {
                         type: 'text',
                         value: res.quantity.toString(),
-                        style: `text-align: left; width: 25px;`,
+                        style: `text-align: left; width: 25px; font-family: Tahoma;`,
                     },
                     {
                         type: 'text',
                         value: 'X',
-                        style: `text-align: left; width: 5px;`,
+                        style: `text-align: left; width: 5px; font-family: Tahoma;`,
                     },
                     {
                         type: 'text',
                         value: formatPriceWithoutCurrency(res.selling_price),
-                        style: `text-align: right; width: 90px;`,
+                        style: `text-align: right; width: 90px; font-family: Tahoma;`,
                     },
                     {
                         type: 'text',
                         value: formatPriceWithoutCurrency(res.total_price),
-                        style: `text-align: right; width: 90px;`,
+                        style: `text-align: right; width: 90px; font-family: Tahoma;`,
                     },
                 ]],
                 tableBodyStyle: 'border-style: none',
@@ -373,12 +373,12 @@ export default function TransactionDetail(props) {
                         {
                             type: 'text',
                             value: 'Diskon',
-                            style: `text-align: left; width: 105px;`,
+                            style: `text-align: left; width: 105px; font-family: Tahoma;`,
                         },
                         {
                             type: 'text',
                             value: ('-' + res.discount.replace('Rp ', '')),
-                            style: `text-align: right; width: 105px;`,
+                            style: `text-align: right; width: 105px; font-family: Tahoma;`,
                         },
                     ]],
                     tableBodyStyle: 'border-style: none',
@@ -406,12 +406,12 @@ export default function TransactionDetail(props) {
                             {
                                 type: 'text',
                                 value: labelDiscount,
-                                style: `text-align: left; width: 120px;`,
+                                style: `text-align: left; width: 120px; font-family: Tahoma;`,
                             },
                             {
                                 type: 'text',
                                 value: ('-' + printDiscount),
-                                style: `text-align: right; width: 90px;`,
+                                style: `text-align: right; width: 90px; font-family: Tahoma;`,
                             },
                         ]],
                         tableBodyStyle: 'border-style: none',
@@ -425,12 +425,12 @@ export default function TransactionDetail(props) {
                             {
                                 type: 'text',
                                 value: (data.taxes[0].name + ' (' + data.taxes[0].value + '%)'),
-                                style: `text-align: left; width: 105px;`,
+                                style: `text-align: left; width: 105px; font-family: Tahoma;`,
                             },
                             {
                                 type: 'text',
                                 value: formatPriceWithoutCurrency(data.taxes[0].total),
-                                style: `text-align: right; width: 105px;`,
+                                style: `text-align: right; width: 105px; font-family: Tahoma;`,
                             },
                         ]],
                         tableBodyStyle: 'border-style: none',
@@ -441,7 +441,7 @@ export default function TransactionDetail(props) {
                     type: "text",
                     value: "_____________________________________",
                     style: `text-align: center; margin-top: -10px; margin-left: -5px;`,
-                    css: { "font-size": "12px" }
+                    css: { "font-size": "12px", "font-family": "Tahoma" }
                 });
 
                 tableData.push({
@@ -451,12 +451,12 @@ export default function TransactionDetail(props) {
                         {
                             type: 'text',
                             value: 'Total',
-                            style: `text-align: left; width: 105px;`,
+                            style: `text-align: left; width: 105px; font-family: Tahoma;`,
                         },
                         {
                             type: 'text',
                             value: formatPriceWithoutCurrency(data.total_price),
-                            style: `text-align: right; width: 105px;`,
+                            style: `text-align: right; width: 105px; font-family: Tahoma;`,
                         },
                     ]],
                     tableBodyStyle: 'border-style: none',
@@ -470,12 +470,12 @@ export default function TransactionDetail(props) {
                             {
                                 type: 'text',
                                 value: 'Charges (Cash)',
-                                style: `text-align: left; width: 105px;`,
+                                style: `text-align: left; width: 105px; font-family: Tahoma;`,
                             },
                             {
                                 type: 'text',
                                 value: currCash.replace('Rp ', ''),
-                                style: `text-align: right; width: 105px;`,
+                                style: `text-align: right; width: 105px; font-family: Tahoma;`,
                             },
                         ]],
                         tableBodyStyle: 'border-style: none',
@@ -487,12 +487,12 @@ export default function TransactionDetail(props) {
                             {
                                 type: 'text',
                                 value: 'Changes',
-                                style: `text-align: left; width: 105px;`,
+                                style: `text-align: left; width: 105px; font-family: Tahoma;`,
                             },
                             {
                                 type: 'text',
                                 value: currChange.replace('Rp ', ''),
-                                style: `text-align: right; width: 105px;`,
+                                style: `text-align: right; width: 105px; font-family: Tahoma;`,
                             },
                         ]],
                         tableBodyStyle: 'border-style: none',
@@ -514,38 +514,38 @@ export default function TransactionDetail(props) {
                 type: 'image',
                 path: mainLogo.path,
                 position: 'center',
-                width: '150px',
-                height: '50px',
+                width: '160px',
+                height: '40px',
             },
             {
                 type: "text",
                 value: address[0],
                 style: `text-align: center;`,
-                css: { "font-size": "10px" }
+                css: { "font-size": "10px", "font-family": "Tahoma" }
             },
             {
                 type: "text",
                 value: address[1],
                 style: `text-align: center;`,
-                css: { "font-size": "10px" }
+                css: { "font-size": "10px", "font-family": "Tahoma" }
             },
             {
                 type: "text",
                 value: address[2],
                 style: `text-align: center;`,
-                css: { "font-size": "10px" }
+                css: { "font-size": "10px", "font-family": "Tahoma" }
             },
             {
                 type: "text",
                 value: receipt,
                 style: `text-align: center; margin-top: 15px;`,
-                css: { "font-size": "11px" }
+                css: { "font-size": "11px", "font-family": "Tahoma" }
             },
             {
                 type: "text",
                 value: "_____________________________________",
                 style: `text-align: center; margin-bottom: 10px; margin-left: -5px`,
-                css: { "font-size": "12px" }
+                css: { "font-size": "12px", "font-family": "Tahoma" }
             },
         ];
 
