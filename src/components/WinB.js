@@ -179,10 +179,10 @@ function WinB() {
 
       {/* Footer */}
       <Grid container id="footer-cart">
-        <Grid item xs={6} className="preview-logo-container">
+        <Grid item xs={3} lg={6} className="preview-logo-container">
           <img src={logo} alt="logo" />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={9} lg={6}>
           <Grid container>
             <Grid item xs={9}>
               <h3 className="text-right">

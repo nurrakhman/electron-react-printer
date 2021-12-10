@@ -28,7 +28,7 @@ function createMainWindow() {
 		minHeight: 600,
 		show: false,
 		title: "Kasir Senwell",
-		icon: `${__dirname}/assets/s-logo.png`,
+		icon: `${__dirname}/assets/icon.png`,
 		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,
@@ -42,7 +42,7 @@ function createMainWindow() {
 		minHeight: 600,
 		show: false,
 		title: "Preview Pembayaran",
-		icon: `${__dirname}/assets/s-logo.png`,
+		icon: `${__dirname}/assets/icon.png`,
 		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,
@@ -224,7 +224,7 @@ ipcMain.on('open-sub-window', (event) => {
 			minHeight: 600,
 			show: false,
 			title: "Preview Pembayaran",
-			icon: `${__dirname}/assets/s-logo.png`,
+			icon: `${__dirname}/assets/icon.png`,
 			webPreferences: {
 				nodeIntegration: true,
 			},

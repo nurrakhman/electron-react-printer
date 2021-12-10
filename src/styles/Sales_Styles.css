@@ -10,7 +10,7 @@
 /* Cart Style */
 #cart-items {
     overflow: auto;
-    max-height: 500px;
+    max-height: calc(100vh - 290px);
     padding-left: 10px;
     padding-right: 10px;
 }
