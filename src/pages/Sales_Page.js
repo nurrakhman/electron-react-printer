@@ -53,6 +53,8 @@ export default function SalesPage() {
     const [token, setToken] = useState('');
 
     useEffect(() => {
+        const token = ipcRenderer.sendSync('get-token');
+        setToken(token);
         // Come from Detail Transaction page
         const params = history.location.state;
         if ( params ) {
@@ -64,8 +66,6 @@ export default function SalesPage() {
         }
         // Come from page other than Detail Transaction
         else {
-            const token = ipcRenderer.sendSync('get-token');
-            setToken(token);
             getData(token);
         }
     },[]);
