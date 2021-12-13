@@ -18,3 +18,7 @@
 .settings-content .right-section .MuiButton-root {
     margin-left: auto;
 }
+
+.settings-container .secondary-btn {
+    margin-top: 15px;
+}

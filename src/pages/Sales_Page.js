@@ -411,7 +411,7 @@ export default function SalesPage() {
         let result = itemList;
         let isRemove = false;
         let localDisc = 0, lastDisc = 0;
-        let tax = 0, onlyTax = 0;
+        let tax = 0;
         let currDisc = 0;
         result.forEach(res => {
             if ( res.product_code === code ) {
@@ -536,6 +536,126 @@ export default function SalesPage() {
         setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
     };
 
+    // Handle product quantity from input textfield
+    const handleInputQuantity = (value, code) => {
+        let result = itemList;
+        let isRemove = false;
+        let localDisc = 0, lastDisc = 0;
+        let currDisc = 0, totalPrev = 0;
+        let tax = 0;
+
+        result.forEach(res => {
+            if ( res.product_code === code ) {
+                if ( value !== res.quantity ) {
+                    if ( value > 0 ) {
+                        setAutocompleteKey(res._id + " " + value);
+                        res.quantity = value;
+                        totalPrev = unformatPrice(res.total_price);
+                        res.total_price = value * unformatPrice(res.selling_price);
+                        totalPrev = res.total_price - totalPrev;
+                        res.total_price = formatToPrice(res.total_price);
+                    }
+                    else {
+                        isRemove = true;
+                        totalPrev = unformatPrice(res.total_price) * -1;
+                        res.total_price = res.selling_price;
+                        setAutocompleteKey(res._id + " 0");
+                    }
+
+                    // Cek jika ada diskon per produk
+                    if ( res.promo_id ) {
+                        if ( res.promo_id.type_promo === 'buyxgety' ) {
+                            if ( res.quantity >= res.promo_id.x.value ) {
+                                let isInCart = false;
+                                itemList.forEach(prod => {
+                                    if ( prod._id === res.promo_id.y.product_id._id ) {
+                                        isInCart = true;
+                                        setAlertText('Tidak mendapat produk gratisan karena produk gratisan'
+                                            + ' sudah ada dalam keranjang belanja');
+                                        setOpenErrorAlert(true);
+                                    }
+                                });
+                                if ( !isInCart ) {
+                                    res.buyxgety = {
+                                        id: res.promo_id.y.product_id._id,
+                                        name: res.promo_id.y.product_id.name,
+                                        qty: parseInt(res.promo_id.y.value),
+                                        price: formatToPrice(res.promo_id.y.value
+                                            * res.promo_id.y.product_id.selling_price),
+                                    };
+                                }
+                            }
+                            else if ( res.promo_id.x.value > res.quantity ) {
+                                res.buyxgety = false;
+                            }
+                        }
+                        else if ( res.promo_id.type_promo === 'persen' ) {
+                            lastDisc = unformatPrice(res.discount);
+                            if ( isRemove ) {
+                                localDisc = 0;
+                                res.discount = 'Rp 0';
+                            }
+                            else {
+                                localDisc = Math.ceil(unformatPrice(res.total_price)
+                                    * res.promo_id.value / 100);
+                                res.discount = formatToPrice(localDisc);
+                            }
+                        }
+                        else if ( res.promo_id.type_promo === 'rupiah' ) {
+                            if ( isRemove ) {
+                                lastDisc = unformatPrice(res.discount);
+                                res.discount = 'Rp 0';
+                            }
+                            else {
+                                localDisc = unformatPrice(res.promo_id.value) * res.quantity;
+                                lastDisc = unformatPrice(res.discount);
+                                res.discount = formatToPrice(localDisc);
+                            }
+                        }
+                    }
+    
+                    // Cek jika memakai diskon apply-to-all persenan
+                    let total = totalPrev + subtotalPure + lastDisc - localDisc;
+                    setSubtotalPure(total);
+    
+                    if ( currDiscount.type === 'persen' ) {
+                        currDisc = Math.ceil(total * unformatPrice(currDiscount.discount) / 100);
+                        setApplyToAllDisc(currDisc);
+                        tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        setSubtotal(formatToPrice(tax));
+                    }
+                    else if ( currDiscount.type === 'rupiah' ) {
+                        currDisc = unformatPrice(currDiscount.discount);
+                        tax = Math.ceil((total - currDisc) * (100 + taxValue) / 100);
+                        setSubtotal(formatToPrice(tax));
+                    }
+                    else {
+                        tax = Math.ceil(total * (100 + taxValue) / 100);
+                        setSubtotal(formatToPrice(tax));
+                        setApplyToAllDisc(0);
+                    }
+                }
+            }
+        });
+        // Remove produk dari cart
+        if ( isRemove ) {
+            result = result.filter(res => res.product_code !== code);
+        }
+        setItemList(result);
+
+        // Send data to customer layer
+        let subtotalData = [
+            {
+                discount: currDiscount,
+                tax: currTax,
+                total: formatToPrice(tax),
+            },
+            result,
+        ];
+        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+        setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
+    }
+
     // Remove product from list of item by clicking x button
     const removeProduct = (code) => {
         // Keluarkan produk yang dipilih dari cart
@@ -562,7 +682,7 @@ export default function SalesPage() {
         }
 
         // Cek jika sedang memakai diskon persenan
-        let total = 0, currTotal = 0, onlyTax = 0, currDisc = 0;
+        let total = 0, currTotal = 0, currDisc = 0;
         if ( currDiscount.type === 'persen' ) {
             // Membalikkan harga ke sebelum diskon lalu hitung persenannya lagi
             total = subtotalPure + lastDisc
@@ -596,7 +716,7 @@ export default function SalesPage() {
     };
 
     const handleOnChangeDiscount = (discount) => {
-        let tax = 0, onlyTax = 0, totalDisc = 0;
+        let tax = 0, totalDisc = 0;
         const temp = discountOptions.filter(res => res.value === discount.value)[0];
         if ( temp.type === 'persen' ) {
             // Total harga kurangi persentase diskon
@@ -762,20 +882,52 @@ export default function SalesPage() {
                                 <div key={res._id}>
                                     <Grid container>
                                         <Grid item xs={5} sm={6}>
-                                            <p>{res.product_code + " - " + res.name}</p>
+                                            <p style={{ marginRight: "10px" }}>
+                                                {res.product_code + " - " + res.name}
+                                            </p>
                                         </Grid>
                                         <Grid item xs={4} sm={3} className="middle-align">
                                             <RemoveCircleOutlineIcon
                                                 className="pointable"
                                                 onClick={() => handleQuantity('minus', res.product_code)}
                                             />
-                                            <span className="qty-text">{res.quantity}</span>
+                                            <TextField
+                                                type="number"
+                                                key={res.product_code + "_" + res.quantity}
+                                                variant="outlined"
+                                                className="qty-text"
+                                                defaultValue={res.quantity}
+                                                InputProps={{
+                                                    inputProps: { min: 0 }
+                                                }}
+                                                onBlur={(e) => {
+                                                    const newVal = parseInt(e.target.value);
+                                                    if ( numberRegex.test(newVal) ) {
+                                                        handleInputQuantity(newVal, res.product_code);
+                                                    }
+                                                    else {
+                                                        handleInputQuantity(1, res.product_code);
+                                                    }
+                                                }}
+                                                onKeyPress={(e) => {
+                                                    if ( e.key === 'Enter' ) {
+                                                        const newVal = parseInt(e.target.value);
+                                                        if ( numberRegex.test(newVal) ) {
+                                                            handleInputQuantity(newVal, res.product_code);
+                                                        }
+                                                        else {
+                                                            handleInputQuantity(1, res.product_code);
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                            {/* <span className="qty-text">{res.quantity}</span> */}
                                             <AddCircleOutlineIcon
                                                 className="pointable"
                                                 onClick={() => handleQuantity('plus', res.product_code)}
                                             />
                                         </Grid>
-                                        <Grid item xs={2} sm={2}>
+                                        <Grid item xs={2} sm={2} className="middle-align">
                                             <p>{res.total_price}</p>
                                         </Grid>
                                         <Grid item xs={1} sm={1} className="middle-align">

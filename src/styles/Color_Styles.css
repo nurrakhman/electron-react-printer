@@ -21,7 +21,8 @@
     color: white;
     background-color: var(--main-dark-green);
 }
-#header-container .header-refresh {
+#header-container .header-refresh,
+.secondary-btn.filled.MuiButton-root {
     color: var(--main-dark-green);
     background-color: white;
 }

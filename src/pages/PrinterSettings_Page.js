@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Radio, RadioGroup, FormControl, FormControlLabel } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import { Grid, Radio, RadioGroup, FormControl, FormControlLabel, Button } from "@material-ui/core";
 import HeaderCom from "../components/Header_Com";
 import "../styles/Settings_Styles.css";
 
@@ -8,6 +9,7 @@ const { ipcRenderer } = require("electron");
 
 export default function PrinterSettings() {
 
+    const history = useHistory();
     const [activePrinter, setActivePrinter] = useState(null);
     const [printerList, setPrinterList] = useState([]);
 
@@ -60,6 +62,19 @@ export default function PrinterSettings() {
                     </Grid>
                     <Grid item xs={3}></Grid>
                 </Grid>
+                {/* <Grid container>
+                    <Grid item xs={3}></Grid>
+                    <Grid item xs={6}>
+                        <Button
+                            variant="contained"
+                            className="modal-cancel-btn secondary-btn filled"
+                            onClick={() => history.goBack()}
+                        >
+                            Kembali
+                        </Button>
+                    </Grid>
+                    <Grid item xs={3}></Grid>
+                </Grid> */}
             </Grid>
         </Grid>
     )
