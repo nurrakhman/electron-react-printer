@@ -101,7 +101,10 @@ function WinB() {
   
   return ( showThanks ?
     <Grid container id="sub-container-thanks">
-      <h1>Terima Kasih Sudah Berbelanja Di Tempat Kami!</h1>
+      <Grid item xs={12}>
+        <img src={logo} alt="logo" />
+        <h1>Terima Kasih Sudah Berbelanja Di Tempat Kami!</h1>
+      </Grid>
     </Grid>
     : <Grid container id="sub-container">
       <Grid item xs={12} id="sub-header">

@@ -78,7 +78,6 @@ export default function TransactionDetail(props) {
             setCurrDiscount(params.currDiscount);
             setSubtotalPure(params.subtotalPure);
             setSelectedMethod(params.selectedMethod);
-            setConnectedDevice(params.connectedDevice);
             setPaymentOptions(params.paymentOptions);
             setPaymentCategories(params.paymentCategories);
             if ( params.totalPrice !== 'Rp 0' ) {

@@ -21,6 +21,7 @@ function Alert(props) {
 
 export default function SalesPage() {
 
+    const numberRegex = /^[0-9]*$/;
     const history = useHistory();
     const autoRef = useRef();
 
@@ -48,25 +49,33 @@ export default function SalesPage() {
     // Page State
     const [isLoading, setIsLoading] = useState(true);
     const [isJWTOpen, setIsJWTOpen] = useState(false);
+    const [openPrinter, setOpenPrinter] = useState(false);
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [alertText, setAlertText] = useState('');
     const [token, setToken] = useState('');
 
     useEffect(() => {
-        const token = ipcRenderer.sendSync('get-token');
-        setToken(token);
-        // Come from Detail Transaction page
-        const params = history.location.state;
-        if ( params ) {
-            // If previous transaction has been paid
-            if ( !params.isRefresh ) {
-                applySavedData(params);
+        const connectedPrinter = ipcRenderer.sendSync('get-printer');
+        if ( connectedPrinter ) {
+            const token = ipcRenderer.sendSync('get-token');
+            setToken(token);
+            // Come from Detail Transaction page
+            const params = history.location.state;
+            if ( params ) {
+                // If previous transaction has been paid
+                if ( !params.isRefresh ) {
+                    applySavedData(params);
+                }
+                getData(params.token);
             }
-            getData(params.token);
+            // Come from page other than Detail Transaction
+            else {
+                getData(token);
+            }
         }
-        // Come from page other than Detail Transaction
         else {
-            getData(token);
+            setIsLoading(false);
+            setOpenPrinter(true);
         }
     },[]);
 
@@ -684,6 +693,14 @@ export default function SalesPage() {
                 modalType="handle-jwt"
                 titleClassName="text-center"
                 modalTitle="Token Anda Sudah Expire"
+            />
+            <CustomModal
+              open={openPrinter}
+              modalType="printer-caution"
+              btnText="Atur Printer"
+              titleClassName="text-center"
+              modalTitle="Silakan hubungkan aplikasi dengan printer terlebih dulu."
+              onClickOK={() => history.push("/pengaturan-printer")}
             />
             <Grid item xs={12}>
                 <HeaderCom

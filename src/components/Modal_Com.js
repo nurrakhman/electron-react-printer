@@ -69,6 +69,14 @@ export default function CustomModal(props) {
                         >
                             OK
                         </Button>
+                    : props.modalType === "printer-caution"?
+                        <Button
+                            variant="contained"
+                            className="primary-btn center-align"
+                            onClick={props.onClickOK}
+                        >
+                            Atur Printer
+                        </Button>
                     : <Grid container style={{ marginTop: "30px" }}>
                         <Grid item xs={6}>
                             <Button
