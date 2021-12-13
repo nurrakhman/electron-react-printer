@@ -1,8 +1,8 @@
 {
   "name": "simple-electron-react",
-  "productName": "React Electron App",
+  "productName": "Kasir Senwell",
   "version": "1.0.0",
-  "description": "Simple boilerplate for building Electron apps with React",
+  "description": "Aplikasi kasir untuk Toko Senwell",
   "license": "MIT",
   "engines": {
     "node": ">=9.0.0",

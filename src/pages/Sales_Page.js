@@ -631,6 +631,7 @@ export default function SalesPage() {
     const refreshPage = () => {
         const token = ipcRenderer.sendSync('get-token');
         setToken(token);
+        getData(token);
         setItemList([]);
         setSubtotalPure(0);
         setSubtotal("Rp 0");

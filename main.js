@@ -225,6 +225,7 @@ ipcMain.on('open-sub-window', (event) => {
 			show: false,
 			title: "Preview Pembayaran",
 			icon: `${__dirname}/assets/icon.png`,
+			autoHideMenuBar: true,
 			webPreferences: {
 				nodeIntegration: true,
 			},
