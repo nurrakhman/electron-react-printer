@@ -896,6 +896,7 @@ export default function SalesPage() {
                                                 key={res.product_code + "_" + res.quantity}
                                                 variant="outlined"
                                                 className="qty-text"
+                                                placeholder="1"
                                                 defaultValue={res.quantity}
                                                 InputProps={{
                                                     inputProps: { min: 0 }
@@ -921,7 +922,6 @@ export default function SalesPage() {
                                                     }
                                                 }}
                                             />
-                                            {/* <span className="qty-text">{res.quantity}</span> */}
                                             <AddCircleOutlineIcon
                                                 className="pointable"
                                                 onClick={() => handleQuantity('plus', res.product_code)}
