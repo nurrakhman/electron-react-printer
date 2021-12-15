@@ -25,6 +25,7 @@ const { remote } = require("electron");
 export default function TransactionDetail(props) {
 
     const history = useHistory();
+    const digitRef = React.useRef();
 
     // Constant Data
     const money = [100000, 50000, 20000, 10000, 5000, 2000, 1000];
@@ -55,7 +56,6 @@ export default function TransactionDetail(props) {
     // Page State
     const [isTextLoading, setIsTextLoading] = useState(false);
     const [isJWTOpen, setIsJWTOpen] = useState(false);
-    const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [token, setToken] = useState('');
     const [connectedDevice, setConnectedDevice] = useState('');
@@ -136,7 +136,6 @@ export default function TransactionDetail(props) {
                 res => res.category === payMethod.value
             );
             setBankOptions(bankOpts);
-            setIsPaymentOpen(true);
         }
     }
 
@@ -714,11 +713,13 @@ export default function TransactionDetail(props) {
                                             defaultValue={selectedBank}
                                             onChange={(_, value) => {
                                                 setSelectedBank(value);
+                                                digitRef.current.focus();
                                             }}
                                             getOptionLabel={(option) => option.label}
                                             renderInput={(params) =>
                                                 <TextField
                                                     {...params}
+                                                    autoFocus
                                                     label="Pilih Bank *"
                                                     placeholder="Pilih Bank"
                                                     variant="outlined"
@@ -744,6 +745,7 @@ export default function TransactionDetail(props) {
                                             InputLabelProps={{
                                                 shrink: true,
                                             }}
+                                            inputRef={digitRef}
                                         />
                                     </Grid>
                                 </>
@@ -754,6 +756,7 @@ export default function TransactionDetail(props) {
                                             Input Cash
                                         </label>
                                         <NumberFormat
+                                            autoFocus
                                             variant="outlined"
                                             customInput={TextField}
                                             thousandSeparator="."
