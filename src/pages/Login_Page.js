@@ -1,6 +1,5 @@
 import "babel-polyfill";
 import React, { useState } from "react";
-import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import { Container, Grid, TextField, Button, InputAdornment,
     IconButton, Snackbar } from '@material-ui/core';
@@ -134,6 +133,11 @@ export default function LoginPage() {
                             onChange={e => {
                                 if ( !e.target.value.includes(" ") )
                                     setPassword(e.target.value)
+                            }}
+                            onKeyPress={(e) => {
+                                if ( e.key === 'Enter' ) {
+                                    handleLogin();
+                                }
                             }}
                             InputProps={{
                                 endAdornment: (

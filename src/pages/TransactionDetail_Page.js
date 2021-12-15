@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Hotkeys from "react-hot-keys";
 import MuiAlert from '@material-ui/lab/Alert';
 import NumberFormat from "react-number-format";
 import { Autocomplete } from "@material-ui/lab";
@@ -9,7 +10,6 @@ import CustomModal from "../components/Modal_Com";
 import { postTransaction } from "../logic/APIHandler";
 import { formatPriceWithoutCurrency, formatToPrice, getDefaultAddress, unformatPrice } from "../logic/Handler";
 import "../styles/TransactionDetail_Styles.css";
-import logo from '../../assets/logo.png';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -630,6 +630,17 @@ export default function TransactionDetail(props) {
         }
     };
 
+    const handleHotKeysPrimary = (e) => {
+        if ( e.ctrlKey && e.key === 'Enter' ) {
+            if ( isPaid ) {
+                handleNavigation();
+            }
+            else {
+                onSubmitTransaction();
+            }
+        }
+    }
+
     const handleNavigation = async () => {
         if ( isPaid ) {
             ipcRenderer.send('update-data-tampilan', 'reset');
@@ -658,6 +669,10 @@ export default function TransactionDetail(props) {
     }
 
     return (
+        <Hotkeys
+            keyName="ctrl+enter"
+            onKeyUp={isPaid? handleNavigation : onSubmitTransaction}
+        >
         <Grid container className="main-container">
             <Snackbar open={openSuccessAlert} autoHideDuration={2500} onClose={() => setOpenSuccessAlert(false)}>
                 <Alert severity="success">
@@ -726,6 +741,7 @@ export default function TransactionDetail(props) {
                                                     InputLabelProps={{
                                                         shrink: true,
                                                     }}
+                                                    onKeyUp={e => handleHotKeysPrimary(e)}
                                                 />
                                             }
                                         />
@@ -742,6 +758,7 @@ export default function TransactionDetail(props) {
                                                     setDigit(e.target.value);
                                                 }
                                             }}
+                                            onKeyUp={e => handleHotKeysPrimary(e)}
                                             InputLabelProps={{
                                                 shrink: true,
                                             }}
@@ -777,6 +794,7 @@ export default function TransactionDetail(props) {
                                                     setRemainder("Rp 0");
                                                 }
                                             }}
+                                            onKeyUp={e => handleHotKeysPrimary(e)}
                                             className="full-width thin-textfield"
                                             placeholder="Rp 0"
                                             allowNegative={false}
@@ -959,5 +977,6 @@ export default function TransactionDetail(props) {
                 </Grid>
             </Grid>
         </Grid>
+        </Hotkeys>
     )
 }

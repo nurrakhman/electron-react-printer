@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import Hotkeys from "react-hot-keys";
 import MuiAlert from '@material-ui/lab/Alert';
 import { Autocomplete } from "@material-ui/lab";
 import { Grid, Button, TextField, Snackbar } from "@material-ui/core";
@@ -801,6 +802,10 @@ export default function SalesPage() {
     }
 
     return (
+        <Hotkeys
+            keyName="ctrl+enter"
+            onKeyUp={goToTransasctionDetail}
+        >
         <Grid container className="main-container">
             { isLoading ? ( <Spinner /> ) : "" }
             <Snackbar open={openErrorAlert} autoHideDuration={2500} onClose={() => setOpenErrorAlert(false)}>
@@ -855,11 +860,11 @@ export default function SalesPage() {
                                         //     ...params.InputProps,
                                         //     type: 'search',
                                         // }}
-                                        // onKeyDown={e => {
-                                        //     if ( e.code === 'Enter' && e.target.value ) {
-                                        //         handleAddProduct(e.target.value);
-                                        //     }
-                                        // }}
+                                        onKeyUp={e => {
+                                            if ( e.ctrlKey && e.key === 'Enter' ) {
+                                                goToTransasctionDetail();
+                                            }
+                                        }}
                                     />
                                     )}
                                 />
@@ -993,6 +998,11 @@ export default function SalesPage() {
                                             {...params}
                                             placeholder="Pilih Diskon"
                                             variant="outlined"
+                                            onKeyUp={e => {
+                                                if ( e.ctrlKey && e.key === 'Enter' ) {
+                                                    goToTransasctionDetail();
+                                                }
+                                            }}
                                         />
                                     }
                                 />
@@ -1022,5 +1032,6 @@ export default function SalesPage() {
                 </Grid>
             </Grid>
         </Grid>
+        </Hotkeys>
     )
 }
