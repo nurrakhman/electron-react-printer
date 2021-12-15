@@ -25,6 +25,7 @@ export default function SalesPage() {
     const numberRegex = /^[0-9]*$/;
     const history = useHistory();
     const autoRef = useRef();
+    const searchRef = useRef();
 
     // Data State
     const [taxValue, setTaxValue] = useState(0);
@@ -803,8 +804,15 @@ export default function SalesPage() {
 
     return (
         <Hotkeys
-            keyName="ctrl+enter"
-            onKeyUp={goToTransasctionDetail}
+            keyName="ctrl+enter,ctrl+s"
+            onKeyUp={(keyName) => {
+                if ( keyName === 'ctrl+enter' ) {
+                    goToTransasctionDetail()
+                }
+                else if ( keyName === 'ctrl+s' ) {
+                    searchRef.current.focus();
+                }
+            }}
         >
         <Grid container className="main-container">
             { isLoading ? ( <Spinner /> ) : "" }
@@ -853,6 +861,7 @@ export default function SalesPage() {
                                         placeholder="Cari produk..."
                                         margin="normal"
                                         variant="outlined"
+                                        inputRef={searchRef}
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
@@ -915,8 +924,8 @@ export default function SalesPage() {
                                                         handleInputQuantity(1, res.product_code);
                                                     }
                                                 }}
-                                                onKeyPress={(e) => {
-                                                    if ( e.key === 'Enter' ) {
+                                                onKeyUp={(e) => {
+                                                    if ( e.key === 'Enter' || ( e.ctrlKey && e.key === 's' ) ) {
                                                         const newVal = parseInt(e.target.value);
                                                         if ( numberRegex.test(newVal) ) {
                                                             handleInputQuantity(newVal, res.product_code);
@@ -1001,6 +1010,9 @@ export default function SalesPage() {
                                             onKeyUp={e => {
                                                 if ( e.ctrlKey && e.key === 'Enter' ) {
                                                     goToTransasctionDetail();
+                                                }
+                                                else if ( e.ctrlKey && e.key === 's' ) {
+                                                    searchRef.current.focus();
                                                 }
                                             }}
                                         />
