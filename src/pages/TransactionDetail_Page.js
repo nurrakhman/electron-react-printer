@@ -565,7 +565,8 @@ export default function TransactionDetail(props) {
             copies: 1, // Number of copies to print
             printerName: activePrinter, // printerName: string, check it at webContent.getPrinters()
             timeOutPerLine: 5000,
-            silent: true
+            silent: true,
+            pageSize: { height: 1204000, width: 71000 }
         };
 
         if ( activePrinter ) {

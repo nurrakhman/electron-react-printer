@@ -805,6 +805,9 @@ export default function SalesPage() {
     return (
         <Hotkeys
             keyName="ctrl+enter,ctrl+s"
+            filter={(event) => {
+                return true;
+            }}
             onKeyUp={(keyName) => {
                 if ( keyName === 'ctrl+enter' ) {
                     goToTransasctionDetail()

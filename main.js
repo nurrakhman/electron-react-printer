@@ -35,22 +35,22 @@ function createMainWindow() {
 		},
 	})
 
-	// subWindow = new BrowserWindow({
-	// 	width: 800,
-	// 	height: 600,
-	// 	minWidth: 800,
-	// 	minHeight: 600,
-	// 	show: false,
-	// 	title: "Preview Pembayaran",
-	// 	icon: `${__dirname}/assets/icon.png`,
-	// 	autoHideMenuBar: true,
-	// 	webPreferences: {
-	// 		nodeIntegration: true,
-	// 	},
-	// })
+	subWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		minWidth: 800,
+		minHeight: 600,
+		show: false,
+		title: "Preview Pembayaran",
+		icon: `${__dirname}/assets/icon.png`,
+		autoHideMenuBar: true,
+		webPreferences: {
+			nodeIntegration: true,
+		},
+	})
 
 	let indexPath
-	// let subPath
+	let subPath
 
 	if (isDev && process.argv.indexOf('--noDevServer') === -1) {
 		indexPath = url.format({
@@ -60,13 +60,13 @@ function createMainWindow() {
 			pathname: 'index.html',
 			slashes: true,
 		})
-		// subPath = url.format({
-		// 	protocol: 'http:',
-		// 	host: 'localhost:8080',
-		// 	hash:'/tampilan',
-		// 	pathname: 'index.html',
-		// 	slashes: true,
-		// })
+		subPath = url.format({
+			protocol: 'http:',
+			host: 'localhost:8080',
+			hash:'/tampilan',
+			pathname: 'index.html',
+			slashes: true,
+		})
 	} else {
 		indexPath = url.format({
 			protocol: 'file:',
@@ -74,30 +74,30 @@ function createMainWindow() {
 			pathname: path.join(__dirname, 'dist', 'index.html'),
 			slashes: true,
 		})
-		// subPath = url.format({
-		// 	protocol: 'file:',
-		// 	hash:'/tampilan',
-		// 	pathname: path.join(__dirname, 'dist', 'index.html'),
-		// 	slashes: true,
-		// })
+		subPath = url.format({
+			protocol: 'file:',
+			hash:'/tampilan',
+			pathname: path.join(__dirname, 'dist', 'index.html'),
+			slashes: true,
+		})
 	}
 
 	Store.initRenderer();
 
 	// set windows to full screen
 	mainWindow.maximize();
-	// subWindow.maximize();
+	subWindow.maximize();
 
 	mainWindow.loadURL(indexPath)
-	// subWindow.loadURL(subPath)
+	subWindow.loadURL(subPath)
 
 	// Prevent app title from updating to default title
 	mainWindow.on('page-title-updated', function(e) {
 		e.preventDefault()
 	});
-	// subWindow.on('page-title-updated', function(e) {
-	// 	e.preventDefault()
-	// });
+	subWindow.on('page-title-updated', function(e) {
+		e.preventDefault()
+	});
 
 	// Don't show until we are ready and loaded
 	mainWindow.once('ready-to-show', () => {
@@ -140,14 +140,14 @@ function createMainWindow() {
 	});
 	mainWindow.on('closed', () => (mainWindow = null))
 
-	// subWindow.once('ready-to-show', () => {
-	// 	subWindow.show()
-	// })
+	subWindow.once('ready-to-show', () => {
+		subWindow.show()
+	})
 
-	// subWindow.on('closed', () => {
-	// 	isSubOpened = false;
-	// 	subWindow = null;
-	// })
+	subWindow.on('closed', () => {
+		isSubOpened = false;
+		subWindow = null;
+	})
 }
 
 app.on('ready', createMainWindow)
