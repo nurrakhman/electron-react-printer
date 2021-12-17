@@ -143,7 +143,7 @@ function WinB() {
                   <p className="text-center">{idx+1}</p>
                 </Grid>
                 <Grid item xs={6}>
-                  <p>{res.product_code + " - " + res.name}</p>
+                  <p>{res.name}</p>
                 </Grid>
                 <Grid item xs={1}>
                   <p className="text-center">{res.quantity}</p>
@@ -195,7 +195,7 @@ function WinB() {
         <Grid item xs={9} lg={6}>
           <Grid container>
             <Grid item xs={7}>
-              <h3 className="text-right">
+              <h3 className="text-right padding-right">
                 {discount.name?
                   `Diskon ${discount.name} (${discount.value})` : "Diskon"
                 }
@@ -206,7 +206,7 @@ function WinB() {
             </Grid>
 
             <Grid item xs={7}>
-              <h3 className="text-right">
+              <h3 className="text-right padding-right">
                 {tax.name?
                   `Pajak ${tax.name} (${tax.value}%)` : "Pajak"
                 }
@@ -217,7 +217,7 @@ function WinB() {
             </Grid>
 
             <Grid item xs={7}>
-              <h1 className="text-right">Subtotal</h1>
+              <h1 className="text-right padding-right">Subtotal</h1>
             </Grid>
             <Grid item xs={5}>
               <h1 className="text-right">{subtotal}</h1>

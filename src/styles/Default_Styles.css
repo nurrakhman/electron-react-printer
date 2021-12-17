@@ -61,6 +61,9 @@ body {
 .no-padding {
     padding: 0 !important;
 }
+.padding-right {
+    padding-right: 15px;
+}
 
 /* Middle Aligned Item */
 .middle-align {
