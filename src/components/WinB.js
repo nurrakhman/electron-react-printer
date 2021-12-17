@@ -187,33 +187,33 @@ function WinB() {
         </Grid>
         <Grid item xs={9} lg={6}>
           <Grid container>
-            <Grid item xs={9}>
+            <Grid item xs={7}>
               <h3 className="text-right">
                 {discount.name?
                   `Diskon ${discount.name} (${discount.value})` : "Diskon"
                 }
               </h3>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={5}>
               <h3 className="text-right">{discount.total}</h3>
             </Grid>
 
-            <Grid item xs={9}>
+            <Grid item xs={7}>
               <h3 className="text-right">
                 {tax.name?
                   `Pajak ${tax.name} (${tax.value}%)` : "Pajak"
                 }
               </h3>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={5}>
               <h3 className="text-right">{tax.total}</h3>
             </Grid>
 
-            <Grid item xs={9}>
-              <h3 className="text-right">Subtotal</h3>
+            <Grid item xs={7}>
+              <h1 className="text-right">Subtotal</h1>
             </Grid>
-            <Grid item xs={3}>
-              <h3 className="text-right">{subtotal}</h3>
+            <Grid item xs={5}>
+              <h1 className="text-right">{subtotal}</h1>
             </Grid>
           </Grid>
         </Grid>

@@ -541,7 +541,7 @@ export default function SalesPage() {
     // Handle product quantity from input textfield
     const handleInputQuantity = (value, code) => {
         let result = itemList;
-        let isRemove = false;
+        let isRemove = false, isUpdated = true;
         let localDisc = 0, lastDisc = 0;
         let currDisc = 0, totalPrev = 0;
         let tax = 0;
@@ -637,25 +637,31 @@ export default function SalesPage() {
                         setApplyToAllDisc(0);
                     }
                 }
+                else {
+                    isUpdated = false;
+                }
             }
         });
-        // Remove produk dari cart
-        if ( isRemove ) {
-            result = result.filter(res => res.product_code !== code);
-        }
-        setItemList(result);
 
-        // Send data to customer layer
-        let subtotalData = [
-            {
-                discount: currDiscount,
-                tax: currTax,
-                total: formatToPrice(tax),
-            },
-            result,
-        ];
-        ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
-        setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
+        if ( isUpdated ) {
+            // Remove produk dari cart
+            if ( isRemove ) {
+                result = result.filter(res => res.product_code !== code);
+            }
+            setItemList(result);
+    
+            // Send data to customer layer
+            let subtotalData = [
+                {
+                    discount: currDiscount,
+                    tax: currTax,
+                    total: formatToPrice(tax),
+                },
+                result,
+            ];
+            ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
+            setTotalDiscount(totalDiscount + localDisc + currDisc - lastDisc - applyToAllDisc);
+        }
     }
 
     // Remove product from list of item by clicking x button
@@ -1028,10 +1034,10 @@ export default function SalesPage() {
                         </Grid>
                         <Grid container className="fixed-footer">
                             <Grid item xs={6}>
-                                <h5>Subtotal</h5>
+                                <h2>Subtotal</h2>
                             </Grid>
                             <Grid item xs={6}>
-                                <h5 className="text-right">{subtotal}</h5>
+                                <h2 className="text-right">{subtotal}</h2>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button
