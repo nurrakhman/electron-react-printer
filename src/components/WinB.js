@@ -29,6 +29,7 @@ function WinB() {
         calculateData(overallData);
         setSubtotal(overallData[0].total);
         setList(overallData[1]);
+        scrollItemListToBottom();
       }
       else if ( data === "refresh" ) {
         resetData();
@@ -85,6 +86,12 @@ function WinB() {
       value: data[0].discount.discount,
       total: formatToPrice(totalDiscount),
     });
+  }
+
+  const scrollItemListToBottom = async () => {
+    await sleep(100);
+    let itemListSection = document.getElementById("preview-items");
+    itemListSection.scrollTop = itemListSection.scrollHeight;
   }
 
   const resetData = async (isShowThanks) => {

@@ -395,6 +395,10 @@ export default function SalesPage() {
                     ipcRenderer.send('update-data-tampilan', JSON.stringify(subtotalData));
                     setApplyToAllDisc(totalDiscount + localDisc + currDisc - applyToAllDisc);
                     setTotalDiscount(totalDiscount + localDisc + currDisc - applyToAllDisc);
+
+                    await sleep(100);
+                    let itemListSection = document.getElementById("cart-items");
+                    itemListSection.scrollTop = itemListSection.scrollHeight;
                 }
                 else if ( isInCart ) {
                     setAutocompleteKey(Math.random() * 100);
