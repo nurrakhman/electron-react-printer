@@ -115,10 +115,11 @@ export default function SalesPage() {
 
             // Handle Payment Methods
             let pmOpts = [];
-            let hasDebit = false, hasCredit = false;
+            let hasDebit = false, hasCredit = false, hasTransfer = false;
             let payCategs = [{ label: 'Cash', category: 'cash', value: 'cash' }];
             let tempPayments = dataInStorage ? storageData.payments_type : resp[0].data.payments_type;
             tempPayments.forEach(res => {
+                console.log(tempPayments)
                 if ( !hasDebit && res.category === 'debit' ) {
                     hasDebit = true;
                     payCategs.push({
@@ -129,6 +130,12 @@ export default function SalesPage() {
                     hasCredit = true;
                     payCategs.push({
                         label: 'Kredit', category: 'credit-card', value: 'credit-card',
+                    });
+                }
+                else if ( !hasTransfer && res.category === 'transfer' ) {
+                    hasTransfer = true;
+                    payCategs.push({
+                        label: 'Transfer', category: 'transfer', value: 'transfer',
                     });
                 }
                 pmOpts.push({

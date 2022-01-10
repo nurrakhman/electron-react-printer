@@ -128,7 +128,8 @@ export default function TransactionDetail(props) {
             setCurrCash('Rp 0');
             setRemainder(subtotal);
         }
-        else if ( method.value.includes('it') ) {
+        // else if ( method.value.includes('it') ) {
+        else {
             setDigit('');
             setCurrCash(subtotal);
             setManualInput(false);
@@ -302,8 +303,12 @@ export default function TransactionDetail(props) {
             'type_payment': {
                 'payment_id': currMethod.category === 'cash' ?
                     paymentOptions.filter(res => res.category === 'cash')[0].value : selectedBank.value,
-                'notes': currMethod.label.includes('it') ?
-                    digit : currCash,
+                'notes':
+                    currMethod.label.includes('it') ?
+                        digit
+                    : currMethod.category === 'cash' ?
+                        currCash
+                    : ("Transfer: " + currMethod.label),
             },
             'taxes': [{
                 'name': currTax.name,
@@ -582,8 +587,11 @@ export default function TransactionDetail(props) {
     // Submit and create new transaction
     const onSubmitTransaction = async () => {
         // printerTest();
-        if ( (digit.length >= 4 && digit !== 'xxxx') || (currMethod.category === 'cash'
-            && currCash && unformatPrice(currCash) >= unformatPrice(subtotal)) )
+        if (
+            (digit.length >= 4 && digit !== 'xxxx')
+            || (currMethod.category === 'cash' && currCash && unformatPrice(currCash) >= unformatPrice(subtotal))
+            || currMethod.category === 'transfer'
+        )
         {
             if ( itemList.length > 0 ) {
                 setIsTextLoading(true);
@@ -609,6 +617,10 @@ export default function TransactionDetail(props) {
                 setAlertText('Belum ada barang dalam keranjang belanja');
                 setOpenErrorAlert(true);
             }
+        }
+        else if ( currMethod.value === 'transfer' ) {
+            setAlertText('Pilih jenis transfer terlebih dulu');
+            setOpenErrorAlert(true);
         }
         else if ( currMethod.value === 'debit' || currMethod.value === 'credit-card' ) {
             if ( selectedBank ) {
@@ -767,7 +779,36 @@ export default function TransactionDetail(props) {
                                         />
                                     </Grid>
                                 </>
-                                :
+                            : currMethod.category === 'transfer' ?
+                                <>
+                                    <Grid item xs={12}>
+                                        <Autocomplete
+                                            disableClearable
+                                            className="dropdown-bank"
+                                            options={bankOptions}
+                                            defaultValue={selectedBank}
+                                            onChange={(_, value) => {
+                                                console.log(value)
+                                                setSelectedBank(value);
+                                            }}
+                                            getOptionLabel={(option) => option.label}
+                                            renderInput={(params) =>
+                                                <TextField
+                                                    {...params}
+                                                    autoFocus
+                                                    label="Pilih Jenis Transfer *"
+                                                    placeholder="Pilih Jenis Transfer"
+                                                    variant="outlined"
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                    onKeyUp={e => handleHotKeysPrimary(e)}
+                                                />
+                                            }
+                                        />
+                                    </Grid>
+                                </>
+                            :
                                 <>
                                     <Grid item xs={12} style={{ position: "relative" }}>
                                         <label className="price-label">
