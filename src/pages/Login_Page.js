@@ -61,6 +61,7 @@ export default function LoginPage() {
                     if ( user.jobdesk === "kasir" ) {
                         canLogin = true;
                         ipcRenderer.sendSync('store-token', user.token);
+                        ipcRenderer.sendSync('store-cashier-name', user.name);
                         const hasAddress = await getBranchData(user.branch_store._id, user.token);
                         if ( !hasAddress ) {
                             canLogin = false;

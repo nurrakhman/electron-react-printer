@@ -131,6 +131,7 @@ function createMainWindow() {
 				if ( res.response == 0 ) {
 					const store = new Store();
 					store.delete('token');
+					store.delete('cashier_name');
 					store.delete('data');
 					isQuitMain = true;
 					app.quit();
@@ -156,6 +157,7 @@ app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		const store = new Store();
 		store.delete('token');
+		store.delete('cashier_name');
 		store.delete('data');
 		app.quit();
 	}
@@ -170,6 +172,17 @@ ipcMain.on('store-token', (event, token) => {
 ipcMain.on('get-token', (event) => {
 	const store = new Store();
 	event.returnValue = store.get('token');
+});
+
+// Set and Get Cashier's Name from Local Storage
+ipcMain.on('store-cashier-name', (event, value) => {
+	const store = new Store();
+	store.set('cashier_name', value);
+	event.returnValue = "Cashier's name stored!";
+});
+ipcMain.on('get-cashier-name', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('cashier_name');
 });
 
 // Set and Get Overall Sales Data from Local Storage
@@ -271,6 +284,7 @@ ipcMain.on('open-sub-window', (event) => {
 ipcMain.on('clear-storage', (event) => {
 	const store = new Store();
 	store.delete('token');
+	store.delete('cashier_name');
 	store.delete('data');
 	store.delete('address');
 	event.returnValue = 'Storage cleared!';

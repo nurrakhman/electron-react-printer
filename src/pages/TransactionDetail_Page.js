@@ -330,10 +330,30 @@ export default function TransactionDetail(props) {
     const handlePrintReceipt = (receipt) => {
         const data = createDataForm('print');
         const mainLogo = ipcRenderer.sendSync('get-logo');
+        const cashierName = ipcRenderer.sendSync('get-cashier-name');
 
         // Create table body value
         let tableData = [];
         for ( let i = 0; i < data.items.length; i++) {
+            if ( i === 0 ) {
+                tableData.push({
+                    type: 'table',
+                    style: 'border-style: none; margin-left: -7px;',
+                    tableBody: [[
+                        {
+                            type: 'text',
+                            value: 'Kasir:',
+                            style: `text-align: left; width: 105px; font-family: Arial;`,
+                        },
+                        {
+                            type: 'text',
+                            value: cashierName,
+                            style: `text-align: right; width: 105px; font-family: Arial;`,
+                        },
+                    ]],
+                    tableBodyStyle: 'border-style: none',
+                });
+            }
             const res = data.items[i];
             tableData.push({
                 type: "text",

@@ -119,7 +119,6 @@ export default function SalesPage() {
             let payCategs = [{ label: 'Cash', category: 'cash', value: 'cash' }];
             let tempPayments = dataInStorage ? storageData.payments_type : resp[0].data.payments_type;
             tempPayments.forEach(res => {
-                console.log(tempPayments)
                 if ( !hasDebit && res.category === 'debit' ) {
                     hasDebit = true;
                     payCategs.push({
