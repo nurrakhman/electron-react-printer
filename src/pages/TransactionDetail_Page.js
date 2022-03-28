@@ -447,7 +447,8 @@ export default function TransactionDetail(props) {
                         tableBody: [[
                             {
                                 type: 'text',
-                                value: (data.taxes[0].name + ' (' + data.taxes[0].value + '%)'),
+                                // value: (data.taxes[0].name + ' (' + data.taxes[0].value + '%)'),
+                                value: data.taxes[0].name, // print only tax name with value=0%
                                 style: `text-align: left; width: 105px; font-family: Arial;`,
                             },
                             {
