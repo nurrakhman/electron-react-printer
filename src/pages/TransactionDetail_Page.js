@@ -526,6 +526,7 @@ export default function TransactionDetail(props) {
         }
 
         // Create printing data
+        const npwp = ipcRenderer.sendSync('get-npwp');
         let address = ipcRenderer.sendSync('get-address');
         if ( address ) {
             address = JSON.parse(address);
@@ -540,6 +541,12 @@ export default function TransactionDetail(props) {
                 position: 'center',
                 width: '160px',
                 height: '40px',
+            },
+            {
+                type: "text",
+                value: ("NPWP: " + npwp),
+                style: `text-align: center;`,
+                css: { "font-size": "10px", "font-family": "Arial" }
             },
             {
                 type: "text",

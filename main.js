@@ -218,6 +218,17 @@ ipcMain.on('get-address', (event) => {
 	event.returnValue = store.get('address');
 });
 
+// Set & Get branch store's NPWP
+ipcMain.on('store-npwp', (event, data) => {
+	const store = new Store();
+	store.set('npwp', data);
+	event.returnValue = 'Branch NPWP stored!';
+});
+ipcMain.on('get-npwp', (event) => {
+	const store = new Store();
+	event.returnValue = store.get('npwp');
+});
+
 // Get image logo path
 ipcMain.on('get-logo', (event) => {
 	let res = {

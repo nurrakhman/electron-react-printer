@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
-// const BASE_URL = 'https://dev.roemahku.id/'; // dev server
 const BASE_URL = 'https://api.roemahku.id/'; // main server
+// const BASE_URL = 'https://dev.roemahku.id/'; // dev server
 
 /**
  * Translate error code to message

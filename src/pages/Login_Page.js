@@ -39,6 +39,7 @@ export default function LoginPage() {
             let branch = resp[0].data;
             branch = formatBranchAddress(branch);
             ipcRenderer.sendSync('store-address', JSON.stringify(branch));
+            ipcRenderer.sendSync('store-npwp', branch.npwp);
             return true;
         }
         else {
