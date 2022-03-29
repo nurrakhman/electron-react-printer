@@ -37,9 +37,9 @@ export default function LoginPage() {
         let resp = await getBranch(id, token);
         if ( resp[0] && resp[0].status === 200 ) {
             let branch = resp[0].data;
+            ipcRenderer.sendSync('store-npwp', branch.npwp.toString());
             branch = formatBranchAddress(branch);
             ipcRenderer.sendSync('store-address', JSON.stringify(branch));
-            ipcRenderer.sendSync('store-npwp', branch.npwp);
             return true;
         }
         else {
